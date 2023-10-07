@@ -157,7 +157,7 @@ void LKM_Motor::Write_Motor_Run(){
 }
 
 //(19)轉矩閉環控制命令(current: -32~32 A)
-void LKM_Motor::Write_Torque_Current(int current){
+void LKM_Motor::Write_Torque_Current(double current){
   int16_t iqControl = (int16_t)(current * 2000 / 32);
 
   // 發送封包
@@ -183,7 +183,7 @@ void LKM_Motor::Write_Torque_Current(int current){
 }
 
 //(20)速度閉環控制命令
-void LKM_Motor::Write_Speed(long speed){
+void LKM_Motor::Write_Speed(double speed){
   int32_t speedControl = (int32_t)(speed * 100 * _reduction_ratio);
 
   // 發送封包
@@ -211,7 +211,7 @@ void LKM_Motor::Write_Speed(long speed){
 }
 
 //(21)多圈位置閉環控制命令1
-void LKM_Motor::Write_Angle_MultiRound(long angle){
+void LKM_Motor::Write_Angle_MultiRound(double angle){
   int64_t angleControl = (int64_t)(angle * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
 
   // 發送封包
@@ -243,7 +243,7 @@ void LKM_Motor::Write_Angle_MultiRound(long angle){
 }
 
 //(22)多圈位置閉環控制命令2
-void LKM_Motor::Write_Angle_MultiRound(long angle, long max_speed){
+void LKM_Motor::Write_Angle_MultiRound(double angle, double max_speed){
   int64_t angleControl = (int64_t)(angle * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
   uint32_t maxSpeed = (uint32_t)(max_speed * 100 * _reduction_ratio); //單位換算與乘上齒輪比
 
@@ -280,7 +280,7 @@ void LKM_Motor::Write_Angle_MultiRound(long angle, long max_speed){
 }
 
 //(23)單圈位置閉環控制命令1, direction: True -> 順時針 ; False -> 逆時針
-void LKM_Motor::Write_Angle_SingleRound(bool direction, int angle){
+void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle){
   uint8_t spinDirection = direction ? 0x00 : 0x01; //True -> 0x00順時針 ; False -> 0x01逆時針
   uint16_t angleControl = (uint16_t)(angle * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
 
@@ -309,7 +309,7 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, int angle){
 }
 
 //(24)單圈位置閉環控制命令2, direction: True -> 順時針 ; False -> 逆時針
-void LKM_Motor::Write_Angle_SingleRound(bool direction, int angle, long max_speed){
+void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle, double max_speed){
   uint8_t spinDirection = direction ? 0x00 : 0x01; //True -> 0x00順時針 ; False -> 0x01逆時針
   uint16_t angleControl = (uint16_t)(angle * 100 ); //單位換算與乘上齒輪比 * _reduction_ratio
   uint32_t maxSpeed = (uint32_t)(max_speed * 100 * _reduction_ratio); //單位換算與乘上齒輪比
@@ -343,21 +343,21 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, int angle, long max_spee
 }
 
 //轉向自動-單圈位置閉環控制命令1(往角度小的方向走)
-void LKM_Motor::Write_Angle_SingleRound(int angle){
+void LKM_Motor::Write_Angle_SingleRound(double angle){
   bool direction = true;
   direction = Find_Turn_Direction(angle);
   Write_Angle_SingleRound(direction, angle);
 }
 
 //轉向自動-單圈位置閉環控制命令2(往角度小的方向走)
-void LKM_Motor::Write_Angle_SingleRound(int angle, long max_speed){
+void LKM_Motor::Write_Angle_SingleRound(double angle, double max_speed){
   bool direction = true;
   direction = Find_Turn_Direction(angle);
   Write_Angle_SingleRound(direction, angle, max_speed);
 }
 
 //(25)增量位置閉環控制命令1
-void LKM_Motor::Write_Angle_Increment(int angle_increment){
+void LKM_Motor::Write_Angle_Increment(double angle_increment){
   int32_t angleIncrement = (int32_t)(angle_increment * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
 
   // 發送封包
@@ -385,7 +385,7 @@ void LKM_Motor::Write_Angle_Increment(int angle_increment){
 }
 
 //(26)增量位置閉環控制命令2
-void LKM_Motor::Write_Angle_Increment(int angle_increment, int max_speed){
+void LKM_Motor::Write_Angle_Increment(double angle_increment, double max_speed){
   int32_t angleIncrement = (int32_t)(angle_increment * 100 * _reduction_ratio); //單位換算與乘上齒輪比
   uint32_t maxSpeed = (uint32_t)(max_speed * 100 * _reduction_ratio);           //單位換算與乘上齒輪比
 
@@ -585,10 +585,10 @@ void LKM_Motor::Print_Setup_Data(){
 }
 
 // direction: True -> 順時針 ; False -> 逆時針
-bool LKM_Motor::Find_Turn_Direction(int target_angle){
+bool LKM_Motor::Find_Turn_Direction(double target_angle){
   Read_Angle_SingleRound();
-  int diff = target_angle - int(motor_angle);
-  if(diff < 0) diff += 360;
+  double diff = target_angle - (double)motor_angle;
+  if(diff < 0) diff += 360.0;
   if(diff > 180) return false; // counterclockwise 逆時針
   else           return true;  // clockwise 順時針
 }
