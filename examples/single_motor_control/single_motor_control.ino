@@ -1,14 +1,13 @@
 #include <LKM_Motor.h>
 
-//create a LKM_Motor object
-LKM_Motor motor1(1, 8, 5); //(id, reduction_ratio, serial_port)
+// create a LKM_Motor object
+LKM_Motor motor1(1, 8, 5); // (id, reduction_ratio, serial_port)
 
 void setup() {
-  
-  motor1.Serial_Init(); 
+  motor1.Serial_Init(); // initialize the motor's serial port
   Serial.begin(115200);
-  pinMode(11, OUTPUT);
-  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT); //LED2 on "Motor Communication Control" PCB board in NTU ASR-LAB
+  pinMode(12, OUTPUT); //LED3 on "Motor Communication Control" PCB board in NTU ASR-LAB
 }
 
 void loop() {

@@ -1,34 +1,19 @@
 #include <LKM_Motor.h>
 
-
-LKM_Motor MotorArr[14];
+#define motor_num 4 
+// create a LKM_Motor object array
+LKM_Motor MotorArr[motor_num];
 
 void setup() {
-  motor1.Serial_Init(); 
   Serial.begin(115200);
-  pinMode(11, OUTPUT);
-  pinMode(12, OUTPUT);
+  for(int i = 0; i < motor_num; i++){
+    MotorArr[i] = LKM_Motor(i+1, 8, 5); // (id, reduction_ratio, serial_port)
+    MotorArr[i].Print_Setup_Data();
+    MotorArr[i].Serial_Init();
+    MotorArr[i].Write_Motor_Run();
+  }
 }
 
 void loop() {
-  digitalWrite(11, HIGH);
-  Serial.println("-> Go to 60 !");
-  motor1.Write_Angle_MultiRound(60, 300);
-  motor1.Print_Data();
-  delay(2000);
-  digitalWrite(11, LOW);
-  Serial.println("-> read ~");
-  motor1.Read_Angle_MultiRound();
-  motor1.Print_Angle();
-  delay(2000);
-  digitalWrite(12, HIGH);
-  Serial.println("-> Go to 0 !");
-  motor1.Write_Angle_MultiRound(0, 300);
-  motor1.Print_Data();
-  delay(2000);
-  digitalWrite(12, LOW);
-  Serial.println("-> read ~");
-  motor1.Read_Angle_MultiRound();
-  motor1.Print_Angle();
-  delay(2000);
+  
 }
