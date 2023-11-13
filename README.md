@@ -9,6 +9,8 @@ LK tech's motor control library using Teensy4.0 with Arduino IDE.
   * [Import the library through the Arduino IDE](#import-the-library-through-the-arduino-ide)
 * [Hardware Setup](#hardware-setup)
   * [Motor setup](#motor-setup)
+* [Other](#other)
+  * [Setup for Teensy 4.0 on Arduino](#setup-for-teensy-40-on-arduino)
   
 ## Install
 ### Manually import the library
@@ -32,3 +34,7 @@ LK tech's motor control library using Teensy4.0 with Arduino IDE.
 
 ## Hardware Setup
 ### Motor setup
+
+## Other
+### Setup for Teensy 4.0 on Arduino 
+
