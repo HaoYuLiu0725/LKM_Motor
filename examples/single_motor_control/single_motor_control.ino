@@ -1,9 +1,13 @@
+/* LKM_Motor/examples/single_motor_control/single_motor_control.ino
+This is the example of single motor control
+Using "Motor Communication Control" PCB board in NTU ASR-LAB, and use "RS485_1" port on the PCB board
+*/
 #include <LKM_Motor.h>
 
 // create a LKM_Motor object
 LKM_Motor motor1(1, 8, 5); // (id, reduction_ratio, serial_port)
-/* Using "Motor Communication Control" PCB board in NTU ASR-LAB,
-RS485_1 is using Serial5 for communication */
+/* Using "Motor Communication Control" PCB board in NTU ASR-LAB, and use "RS485_1" port on the PCB board, 
+"RS485_1" is using Serial5 for communication */
 
 void setup() {
   motor1.Serial_Init(); // initialize the motor's serial port
