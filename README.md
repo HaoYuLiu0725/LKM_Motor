@@ -5,22 +5,22 @@ LK tech's motor control library using Teensy4.0 with Arduino IDE.
 ### Contents
 
 * [Install](#install)
-  * [Manually import the library](#manually-import-the-library)
-  * [Import the library through the Arduino IDE](#import-the-library-through-the-arduino-ide)
+  * [Method1: Manually import the library](#method1-manually-import-the-library)
+  * [Method2: Import the library through the Arduino IDE](#method2-import-the-library-through-the-arduino-ide)
 * [Hardware Setup](#hardware-setup)
   * [Motor setup](#motor-setup)
 * [Other](#other)
   * [Setup for Teensy 4.0 on Arduino IDE](#setup-for-teensy-40-on-arduino-ide)
   
 ## Install
-### Manually import the library
+### Method1: Manually import the library
 
 1. Download library ZIP file, and extract it.
 2. Place the extracted library folder in Documents(文件)/Arduino/libraries/.
 3. Restart the Arduino IDE.
 4. (Optional) Go to Documents(文件)/Arduino/libraries/LKM_Motor, you can delete "image" folder inside it.
 
-### Import the library through the Arduino IDE
+### Method2: Import the library through the Arduino IDE
 
 1. Download library ZIP file.
 2. Open Arduino IDE, click on "Sketch" > "Include Library" > "Add .ZIP Library…", browse to find **"LKM_Motor-main.zip"** file, and click it.
