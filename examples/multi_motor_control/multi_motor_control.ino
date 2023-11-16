@@ -1,7 +1,7 @@
 #include <LKM_Motor.h>
 /* LKM_Motor/examples/multi_motor_control/multi_motor_control.ino
 This is the example of multiple motor control
-Using Teensy4.0 and "Motor Communication Control" PCB board in NTU ASR-LAB, and use "RS485_1" port on the PCB board
+Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" ports on the PCB board
 ("RS485_1" is using Serial5 for communication)
 
 This example will control 3 motor turning from 0 to 60 degree, and then from 60 degree turn back to 0 degree.
