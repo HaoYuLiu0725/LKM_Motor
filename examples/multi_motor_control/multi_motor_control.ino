@@ -45,7 +45,7 @@ void loop() {
     MotorArr[i].Write_Angle_MultiRound(0, 300);               // send command to motor, go to 0 degree, speed = 300
     MotorArr[i].Print_Data();                                 // print out motor's returned data (Temperature, Current, Velocity, Encoder position)
     delay(2000);
-    Ssprintf(temp_buffer, "-> Read Motor ID: %d's angle", i+1);
+    sprintf(temp_buffer, "-> Read Motor ID: %d's angle", i+1);
     Serial.println(temp_buffer);
     MotorArr[i].Read_Angle_MultiRound();                      // send command to motor, read current angle
     MotorArr[i].Print_Angle();                                // print out motor's returned current angle data
