@@ -1,5 +1,9 @@
 # LKM_Motor
-LK tech's motor control library using Teensy4.0 with Arduino IDE.
+LK tech's motor control library using Teensy4.0 with Arduino IDE.  
+**Note:  
+Recommand using "Motor Communication Control" PCB in NTU ASR-LAB,  
+the "RS485_1" ports is using "Serial5" for communication,  
+the "RS485_2" ports is using "Serial3" for communication,**
 
 ### Contents
 * [Install](#install)
@@ -44,18 +48,80 @@ LK tech's motor control library using Teensy4.0 with Arduino IDE.
 ### Single motor control
 [single_motor_control.ino](examples/single_motor_control/single_motor_control.ino)  
 The example of single motor control  
-Using Teensy4.0 and "Motor Communication Control" PCB board in NTU ASR-LAB, and use "RS485_1" port on the PCB board  
+Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" ports on the PCB  
 ("RS485_1" is using Serial5 for communication)  
 This example will control the motor turning from 0 to 60 degree, and then from 60 degree turn back to 0 degree.  
 
 ### Multi motor control
 [multi_motor_control.ino](examples/single_motor_control/multi_motor_control.ino)  
 The example of multiple motor control  
-Using Teensy4.0 and "Motor Communication Control" PCB board in NTU ASR-LAB, and use "RS485_1" port on the PCB board  
+Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" ports on the PCB  
 ("RS485_1" is using Serial5 for communication)  
 This example will control 3 motor turning from 0 to 60 degree, and then from 60 degree turn back to 0 degree.  
 
 ## Library Methods
+`void Serial_Init()`
+
+//更改馬達baudrate  
+`void Change_Baudrate(int baudrate)`
+
+//(8)設置馬達零點  
+`void Set_Motor_Origin()`
+
+//(9)讀取多圈角度命令  
+`void Read_Angle_MultiRound()`
+
+//(10)讀取單圈角度命令  
+`void Read_Angle_SingleRound()`
+
+//(15)電機關機命令  
+`void Write_Motor_Shutdown()`
+
+//(16)電機停止命令  
+`void Write_Motor_Pause()`
+
+//(17)電機運行命令  
+`void Write_Motor_Run()`
+
+//(19)轉矩閉環控制命令(current: -32~32 A)  
+`void Write_Torque_Current(double current)`
+
+//(20)速度閉環控制命令  
+`void Write_Speed(double speed)`
+
+//(21)多圈位置閉環控制命令1  
+`void Write_Angle_MultiRound(double angle)`
+
+//(22)多圈位置閉環控制命令2  
+`void Write_Angle_MultiRound(double angle, double max_speed)`
+
+//(23)單圈位置閉環控制命令1, direction: True -> 順時針 ; False -> 逆時針  
+`void Write_Angle_SingleRound(bool direction, double angle)`
+
+//(24)單圈位置閉環控制命令2, direction: True -> 順時針 ; False -> 逆時針  
+`void Write_Angle_SingleRound(bool direction, double angle, double max_speed)`
+
+//轉向自動-單圈位置閉環控制命令1(往角度小的方向走)  
+`void Write_Angle_SingleRound(double angle)`
+
+//轉向自動-單圈位置閉環控制命令2(往角度小的方向走)  
+`void Write_Angle_SingleRound(double angle, double max_speed)`
+
+//(25)增量位置閉環控制命令1  
+`void Write_Angle_Increment(double angle_increment)`
+
+//(26)增量位置閉環控制命令2  
+`void Write_Angle_Increment(double angle_increment, double max_speed)`
+
+//列印出馬達回傳的角度  
+`void Print_Angle()`
+
+//列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置  
+`void Print_Data()`
+
+`void Print_Setup_Data()`
+
+`bool Find_Turn_Direction(double target_angle)`
 
 ## Other
 ### Setup for Teensy 4.0 on Arduino IDE
