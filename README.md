@@ -15,7 +15,7 @@ the "RS485_2" ports is using "Serial3" for communication,**
 * [Examples](#examples)
   * [Single motor control](#single-motor-control)
   * [Multi motor control](#multi-motor-control)
-  * [Read motor angle](#read_motor_angle)
+  * [Read motor angle](#read-motor-angle)
 * [Library Methods](#library-methods)
 * [Other](#other)
   * [Setup for Teensy 4.0 on Arduino IDE](#setup-for-teensy-40-on-arduino-ide)
