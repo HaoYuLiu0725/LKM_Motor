@@ -16,6 +16,7 @@ the "RS485_2" ports is using "Serial3" for communication,**
   * [Single motor control](#single-motor-control)
   * [Multi motor control](#multi-motor-control)
   * [Read motor angle](#read-motor-angle)
+  * [Set motor origin](#set-motor-origin)
 * [Library Methods](#library-methods)
 * [Other](#other)
   * [Setup for Teensy 4.0 on Arduino IDE](#setup-for-teensy-40-on-arduino-ide)
@@ -46,26 +47,27 @@ the "RS485_2" ports is using "Serial3" for communication,**
 ### PCB setup
 
 ## Examples
+All examples utilize Teensy 4.0 and the 'Motor Communication Control' PCB in NTU ASR-LAB, employing the 'RS485_1' ports on the PCB.  
+("RS485_1" is using Serial5 for communication)  
 ### Single motor control
 [single_motor_control.ino](examples/single_motor_control/single_motor_control.ino)  
 The example of single motor control  
-Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" ports on the PCB  
-("RS485_1" is using Serial5 for communication)  
 This example will control the motor turning from 0 to 60 degree, and then from 60 degree turn back to 0 degree.  
 
 ### Multi motor control
 [multi_motor_control.ino](examples/multi_motor_control/multi_motor_control.ino)  
 The example of multiple motor control  
-Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" ports on the PCB  
-("RS485_1" is using Serial5 for communication)  
 This example will control 3 motor turning from 0 to 60 degree, and then from 60 degree turn back to 0 degree.  
 
 ### Read motor angle
 [read_motor_angle.ino](examples/read_motor_angle/read_motor_angle.ino)  
-The example of read motor angle  
-Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" port on the PCB  
-("RS485_1" is using Serial5 for communication)  
+The example of read motor angle   
 This example will read the angle of the motor specified by the user and print it, using 6 motors as an demonstration.  
+
+### Set motor origin
+[set_motor_origin.ino](examples/set_motor_origin/set_motor_origin.ino)  
+The example of set motor origin and then read motor angle  
+This example will set motor origin and then read the angle of the motor specified by the user and print it, using 6 motors as an demonstration.  
 
 ## Library Methods
 `void Serial_Init()`
