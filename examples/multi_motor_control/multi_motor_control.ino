@@ -1,7 +1,7 @@
 #include <LKM_Motor.h>
 /* LKM_Motor/examples/multi_motor_control/multi_motor_control.ino
 This is the example of multiple motor control
-Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" ports on the PCB board
+Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" ports on the PCB
 ("RS485_1" is using Serial5 for communication)
 
 This example will control 3 motor turning from 0 to 60 degree, and then from 60 degree turn back to 0 degree.
@@ -19,7 +19,7 @@ void setup() {
   for(int i = 0; i < motor_num; i++){
     // assign LKM_Motor object into array. MotorArr[0] is motor ID 1, MotorArr[1] is motor ID 2, MotorArr[2] is motor ID 3, etc.
     MotorArr[i] = LKM_Motor(i+1, 8, 5); // (id, reduction_ratio, serial_port)
-    /* Using "Motor Communication Control" PCB board in NTU ASR-LAB, and use "RS485_1" port on the PCB board, 
+    /* Using "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" port on the PCB, 
     "RS485_1" is using Serial5 for communication */
     MotorArr[i].Print_Setup_Data();     // print out motor's setup data (id, reduction_ratio, serial_port)
     MotorArr[i].Serial_Init();          // initialize the motor's serial port
