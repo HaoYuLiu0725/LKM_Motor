@@ -62,10 +62,10 @@ This example will control 3 motor turning from 0 to 60 degree, and then from 60 
 
 ### Read motor angle
 [read_motor_angle.ino](examples/read_motor_angle/read_motor_angle.ino)  
-The example of read motor angle
-Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" port on the PCB
-("RS485_1" is using Serial5 for communication)
-This example will read the angle of the motor specified by the user and print it, using 6 motors as an demonstration.
+The example of read motor angle  
+Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" port on the PCB  
+("RS485_1" is using Serial5 for communication)  
+This example will read the angle of the motor specified by the user and print it, using 6 motors as an demonstration.  
 
 ## Library Methods
 `void Serial_Init()`
