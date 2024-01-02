@@ -4,7 +4,6 @@ This is the example of read motor angle
 Using Teensy4.0 and "Motor Communication Control" PCB board in NTU ASR-LAB, and use "RS485_1" port on the PCB board
 ("RS485_1" is using Serial5 for communication)
 
-
 This example will read the angle of the motor specified by the user and print it, using 6 motors as an demonstration.
 */
 
@@ -28,12 +27,12 @@ void setup() {
 }
 
 void loop() {
-  if(Serial.available()){// read user's input data (motorID) from Serial Monitor, use 1 ~ 6 in this example
+  if(Serial.available()){                     // read user's input data (motorID) from Serial Monitor, use 1 ~ 6 in this example
     motorID = Serial.parseInt() - 1;
     Serial.println(motorID);
     Serial.clear();
   }
-  MotorArr[motorID].Read_Angle_MultiRound(); // send command to motor, read current angle
-  MotorArr[motorID].Print_Angle();           // print out motor's returned current angle data
+  MotorArr[motorID].Read_Angle_MultiRound();  // send command to motor, read current angle
+  MotorArr[motorID].Print_Angle();            // print out motor's returned current angle data
   delay(100);
 }
