@@ -59,6 +59,78 @@ void LKM_Motor::Change_Baudrate(int baudrate){
   Serial_Init();
 }
 
+//(1)讀取PID參數
+void LKM_Motor::Read_PID_Param(){
+  byte checkSum;
+  _buffer[0] = 0x3E;  //頭字節
+  _buffer[1] = 0x30;  //命令字節
+  _buffer[2] = _id;   //ID
+  _buffer[3] = 0x00;  //數據長度字節
+  checkSum = 0;
+  for (int i = 0; i <= 3; i++){
+    checkSum += _buffer[i];
+  }
+  _buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  _Receive_Pack();                  //接收電機回覆
+}
+
+//(2)寫入PID到RAM, 斷電後寫入參數失效
+void LKM_Motor::Write_PID_Into_RAM(int anglePidKp, int anglePidKi, int speedPidKp, int speedPidKi, int iqPidKp, int iqPidKi){
+  // 發送封包
+  byte checkSum;
+  _buffer[0] = 0x3E;  //頭字節
+  _buffer[1] = 0x31;  //命令字節
+  _buffer[2] = _id;   //ID
+  _buffer[3] = 0x06;  //數據長度字節
+  checkSum = 0;
+  for (int i = 0; i <= 3; i++){
+    checkSum += _buffer[i];
+  }
+  _buffer[4] = checkSum;    //幀頭校驗字節
+  _buffer[5] = anglePidKp;  //位置環P參數
+  _buffer[6] = anglePidKi;  //位置環I參數
+  _buffer[7] = speedPidKp;  //速度環P參數
+  _buffer[8] = speedPidKi;  //速度環I參數
+  _buffer[9] = iqPidKp;     //轉矩環P參數
+  _buffer[10] = iqPidKi;    //轉矩環I參數
+  checkSum = 0;
+  for (int i = 5; i <= 10; i++){
+    checkSum += _buffer[i];
+  }
+  _buffer[11] = checkSum;           //數據校驗字節
+  MOTOR_SERIAL->write(_buffer, 12); //送出封包
+  _Receive_Pack();                  //接收電機回覆
+}
+
+//(3)讀取PID到ROM, 斷電後寫入參數仍然有效
+void LKM_Motor::Write_PID_Into_ROM(int anglePidKp, int anglePidKi, int speedPidKp, int speedPidKi, int iqPidKp, int iqPidKi){
+  // 發送封包
+  byte checkSum;
+  _buffer[0] = 0x3E;  //頭字節
+  _buffer[1] = 0x32;  //命令字節
+  _buffer[2] = _id;   //ID
+  _buffer[3] = 0x06;  //數據長度字節
+  checkSum = 0;
+  for (int i = 0; i <= 3; i++){
+    checkSum += _buffer[i];
+  }
+  _buffer[4] = checkSum;    //幀頭校驗字節
+  _buffer[5] = anglePidKp;  //位置環P參數
+  _buffer[6] = anglePidKi;  //位置環I參數
+  _buffer[7] = speedPidKp;  //速度環P參數
+  _buffer[8] = speedPidKi;  //速度環I參數
+  _buffer[9] = iqPidKp;     //轉矩環P參數
+  _buffer[10] = iqPidKi;    //轉矩環I參數
+  checkSum = 0;
+  for (int i = 5; i <= 10; i++){
+    checkSum += _buffer[i];
+  }
+  _buffer[11] = checkSum;           //數據校驗字節
+  MOTOR_SERIAL->write(_buffer, 12); //送出封包
+  _Receive_Pack();                  //接收電機回覆
+}
+
 //(8)設置馬達零點
 void LKM_Motor::Set_Motor_Origin(){
   byte checkSum;
@@ -478,8 +550,20 @@ void LKM_Motor::_Receive_Pack(){
 
 // 解讀封包內容
 void LKM_Motor::_Unpack(byte data_receive[30], int lenth){
+  // (1)讀取PID參數 (0x30)
+  // (2)寫入PID到RAM, 斷電後寫入參數失效 (0x31)
+  // (3)讀取PID到ROM, 斷電後寫入參數仍然有效 (0x32)
+  if (data_receive[1] == 0x30 || data_receive[1] == 0x31 || data_receive[1] == 0x32){
+    motor_id = (int)data_receive[2]; //馬達ID
+    motor_angle_Kp = (int)data_receive[5];  //馬達PID參數-角度Kp
+    motor_angle_Ki = (int)data_receive[6];  //馬達PID參數-角度Ki
+    motor_speed_Kp = (int)data_receive[7];  //馬達PID參數-速度Kp
+    motor_speed_Ki = (int)data_receive[8];  //馬達PID參數-速度Ki
+    motor_iq_Kp = (int)data_receive[9];     //馬達PID參數-轉矩Kp
+    motor_iq_Ki = (int)data_receive[10];    //馬達PID參數-轉矩Ki
+  }
   // (9)讀取多圈角度命令
-  if (data_receive[1] == 0x92){
+  else if (data_receive[1] == 0x92){
     motor_id = (int)data_receive[2]; //馬達ID
     int64_t motorAngle = (int64_t)(((int64_t)data_receive[12]<<56) + ((int64_t)data_receive[11]<<48) + ((int64_t)data_receive[10]<<40) + 
     ((int64_t)data_receive[9]<<32) + (data_receive[8]<<24) + (data_receive[7]<<16) + (data_receive[6]<<8) + data_receive[5]);
@@ -492,71 +576,15 @@ void LKM_Motor::_Unpack(byte data_receive[30], int lenth){
     uint32_t circleAngle = (uint32_t)((data_receive[8]<<24) + (data_receive[7]<<16) + (data_receive[6]<<8) + data_receive[5]);
     motor_angle = (double)circleAngle / (100.0 * (double)_reduction_ratio);
   }
-  // (19)轉矩閉環控制命令: 回傳電機溫度、電機轉矩電流值、電機轉速以及編碼器位置
-  else if (data_receive[1] == 0xA1){
-    motor_id = (int)data_receive[2]; //馬達ID
-    motor_temperature = (int8_t)(data_receive[5]);
-    int16_t iq_current = (int16_t)((data_receive[7]<<8) + (data_receive[6]));
-    motor_iq = (double)iq_current * 33.0 / 2048.0;
-    motor_speed = (int16_t)((data_receive[9]<<8) + (data_receive[8]));
-    motor_encoder = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
-  }
-  // (20)速度閉環控制命令: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置
-  else if (data_receive[1] == 0xA2){
-    motor_id = (int)data_receive[2]; //馬達ID
-    motor_temperature = (int8_t)(data_receive[5]);
-    int16_t iq_current = (int16_t)((data_receive[7]<<8) + (data_receive[6]));
-    motor_iq = (double)iq_current * 33.0 / 2048.0;
-    motor_speed = (int16_t)((data_receive[9]<<8) + (data_receive[8]));
-    motor_encoder = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
-  }
-  // (21)多圈位置閉環控制命令1: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置
-  else if (data_receive[1] == 0xA3){
-    motor_id = (int)data_receive[2]; //馬達ID
-    motor_temperature = (int8_t)(data_receive[5]);
-    int16_t iq_current = (int16_t)((data_receive[7]<<8) + (data_receive[6]));
-    motor_iq = (double)iq_current * 33.0 / 2048.0;
-    motor_speed = (int16_t)((data_receive[9]<<8) + (data_receive[8]));
-    motor_encoder = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
-  }
-  // (22)多圈位置閉環控制命令2: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置
-  else if (data_receive[1] == 0xA4){
-    motor_id = (int)data_receive[2]; //馬達ID
-    motor_temperature = (int8_t)(data_receive[5]);
-    int16_t iq_current = (int16_t)((data_receive[7]<<8) + (data_receive[6]));
-    motor_iq = (double)iq_current * 33.0 / 2048.0;
-    motor_speed = (int16_t)((data_receive[9]<<8) + (data_receive[8]));
-    motor_encoder = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
-  }
-  // (23)單圈位置閉環控制命令1: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置
-  else if (data_receive[1] == 0xA5){
-    motor_id = (int)data_receive[2]; //馬達ID
-    motor_temperature = (int8_t)(data_receive[5]);
-    int16_t iq_current = (int16_t)((data_receive[7]<<8) + (data_receive[6]));
-    motor_iq = (double)iq_current * 33.0 / 2048.0;
-    motor_speed = (int16_t)((data_receive[9]<<8) + (data_receive[8]));
-    motor_encoder = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
-  }
-  // (24)單圈位置閉環控制命令2: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置
-  else if (data_receive[1] == 0xA6){
-    motor_id = (int)data_receive[2]; //馬達ID
-    motor_temperature = (int8_t)(data_receive[5]);
-    int16_t iq_current = (int16_t)((data_receive[7]<<8) + (data_receive[6]));
-    motor_iq = (double)iq_current * 33.0 / 2048.0;
-    motor_speed = (int16_t)((data_receive[9]<<8) + (data_receive[8]));
-    motor_encoder = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
-  }
-  // (25)增量位置閉環控制命令1: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置
-  else if (data_receive[1] == 0xA7){
-    motor_id = (int)data_receive[2]; //馬達ID
-    motor_temperature = (int8_t)(data_receive[5]);
-    int16_t iq_current = (int16_t)((data_receive[7]<<8) + (data_receive[6]));
-    motor_iq = (double)iq_current * 33.0 / 2048.0;
-    motor_speed = (int16_t)((data_receive[9]<<8) + (data_receive[8]));
-    motor_encoder = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
-  }
-  // (26)增量閉環控制命令2: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置
-  else if (data_receive[1] == 0xA8){
+  // (19)轉矩閉環控制命令: 回傳電機溫度、電機轉矩電流值、電機轉速以及編碼器位置 (0xA1)
+  // (20)速度閉環控制命令: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA2)
+  // (21)多圈位置閉環控制命令1: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA3)
+  // (22)多圈位置閉環控制命令2: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA4)
+  // (23)單圈位置閉環控制命令1: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA5)
+  // (24)單圈位置閉環控制命令2: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA6)
+  // (25)增量位置閉環控制命令1: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA7)
+  // (26)增量位置閉環控制命令2: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA8)
+  else if (data_receive[1] == 0xA1 || data_receive[1] == 0xA2 || data_receive[1] == 0xA3 || data_receive[1] == 0xA4 || data_receive[1] == 0xA5 || data_receive[1] == 0xA6 || data_receive[1] == 0xA7 || data_receive[1] == 0xA8){
     motor_id = (int)data_receive[2]; //馬達ID
     motor_temperature = (int8_t)(data_receive[5]);
     int16_t iq_current = (int16_t)((data_receive[7]<<8) + (data_receive[6]));
