@@ -618,6 +618,13 @@ void LKM_Motor::Print_Angle_Custom(){
   Serial.print("Custom Angle: "); Serial.println(motor_angle_custom);
 }
 
+void LKM_Motor::Print_PID_Param(){
+  char temp_buffer[100];
+  sprintf(temp_buffer, "angle_Kp: %d, angle_Ki: %d, speed_Kp: %d, speed_Ki: %d, iq_Kp: %d, iq_Ki: %d", motor_angle_Kp, motor_angle_Ki, motor_speed_Kp, motor_speed_Ki, motor_iq_Kp, motor_iq_Ki);
+  Serial.print("Motor ID: "); Serial.println(motor_id);
+  Serial.println(temp_buffer);
+}
+
 // direction: True -> 順時針 ; False -> 逆時針
 bool LKM_Motor::Find_Turn_Direction(double target_angle){
   Read_Angle_SingleRound();
