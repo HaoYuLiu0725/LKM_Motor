@@ -31,7 +31,9 @@ public:
   void Print_Angle(); //列印出馬達回傳的角度
   void Print_Data();  //列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置
   void Print_Setup_Data();
+  void Print_Angle_Custom(); //列印出馬達回傳的角度, 角度的負值經過計算處理
   bool Find_Turn_Direction(double target_angle);
+  void Calculate_Custom_Angle(); // 角度的負值經過計算處理
   //儲存馬達回傳的資料
   int motor_id = 0;             //馬達ID
   double motor_angle = 0.0;     //馬達角度
@@ -39,6 +41,7 @@ public:
   int16_t motor_iq = 0;         //馬達轉矩電流
   int16_t motor_speed = 0;      //馬達轉速
   uint16_t motor_encoder = 0;   //馬達編碼器位置
+  double motor_angle_custom = 0.0; //馬達角度, 角度的負值經過計算處理
 
 private:
   void _Receive_Pack();                            //接受回傳指令

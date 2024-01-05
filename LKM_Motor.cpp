@@ -484,6 +484,7 @@ void LKM_Motor::_Unpack(byte data_receive[30], int lenth){
     int64_t motorAngle = (int64_t)(((int64_t)data_receive[12]<<56) + ((int64_t)data_receive[11]<<48) + ((int64_t)data_receive[10]<<40) + 
     ((int64_t)data_receive[9]<<32) + (data_receive[8]<<24) + (data_receive[7]<<16) + (data_receive[6]<<8) + data_receive[5]);
     motor_angle = (double)motorAngle / (100.0 * (double)_reduction_ratio);
+    Calculate_Custom_Angle();
   }
   // (10)讀取單圈角度命令
   else if (data_receive[1] == 0x94){
@@ -584,6 +585,11 @@ void LKM_Motor::Print_Setup_Data(){
   Serial.println(temp_buffer);
 }
 
+void LKM_Motor::Print_Angle_Custom(){
+  Serial.print("Motor ID:     "); Serial.println(motor_id);
+  Serial.print("Custom Angle: "); Serial.println(motor_angle_custom);
+}
+
 // direction: True -> 順時針 ; False -> 逆時針
 bool LKM_Motor::Find_Turn_Direction(double target_angle){
   Read_Angle_SingleRound();
@@ -591,4 +597,9 @@ bool LKM_Motor::Find_Turn_Direction(double target_angle){
   if(diff < 0) diff += 360.0;
   if(diff > 180) return false; // counterclockwise 逆時針
   else           return true;  // clockwise 順時針
+}
+
+void LKM_Motor::Calculate_Custom_Angle(){
+  if(motor_angle < 0) motor_angle_custom = motor_angle + (pow(2, 32) / 800);
+  else motor_angle_custom = motor_angle;
 }
