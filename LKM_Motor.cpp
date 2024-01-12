@@ -72,6 +72,7 @@ void LKM_Motor::Read_PID_Param(){
   }
   _buffer[4] = checkSum;            //幀頭校驗字節
   MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -100,6 +101,7 @@ void LKM_Motor::Write_PID_Into_RAM(int anglePidKp, int anglePidKi, int speedPidK
   }
   _buffer[11] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 12); //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -128,6 +130,7 @@ void LKM_Motor::Write_PID_Into_ROM(int anglePidKp, int anglePidKi, int speedPidK
   }
   _buffer[11] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 12); //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -160,6 +163,7 @@ void LKM_Motor::Read_Angle_MultiRound(){
   }
   _buffer[4] = checkSum;            //幀頭校驗字節
   MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -177,6 +181,7 @@ void LKM_Motor::Read_Angle_SingleRound(){
   }
   _buffer[4] = checkSum;            //幀頭校驗字節
   MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -251,6 +256,7 @@ void LKM_Motor::Write_Torque_Current(double current){
   }
   _buffer[7] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 8);  //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -279,6 +285,7 @@ void LKM_Motor::Write_Speed(double speed){
   }
   _buffer[9] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 10); //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -311,6 +318,7 @@ void LKM_Motor::Write_Angle_MultiRound(double angle){
   }
   _buffer[13] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 14); //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -348,6 +356,7 @@ void LKM_Motor::Write_Angle_MultiRound(double angle, double max_speed){
   }
   _buffer[17] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 18); //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -377,6 +386,7 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle){
   }
   _buffer[9] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 10); //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -411,6 +421,7 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle, double max
   }
   _buffer[13] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 14); //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -453,6 +464,7 @@ void LKM_Motor::Write_Angle_Increment(double angle_increment){
   }
   _buffer[9] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 10); //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -486,6 +498,7 @@ void LKM_Motor::Write_Angle_Increment(double angle_increment, double max_speed){
   }
   _buffer[13] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 14); //送出封包
+  delay(1);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -497,7 +510,7 @@ void LKM_Motor::_Receive_Pack(){
   _count_RX = 0;
   while(MOTOR_SERIAL->available() > 0){
     MOTOR_SERIAL->readBytes(temp, 1); //讀取輸入之byte
-    // Serial.println(temp[0]);
+    // Serial.println(temp[0], HEX);
     // 確認是否為頭字節
     if(temp[0] == 0x3E){
       // Serial.println("head");
