@@ -10,7 +10,7 @@ public:
   LKM_Motor();
   LKM_Motor(int id, int reduction_ratio, int serial_port);
   void Serial_Init();
-  void Change_Baudrate(int baudrate); //更改馬達baudrate
+  void Change_Baudrate(int baudrate);                                           //更改馬達baudrate
   void Write_Motor_Shutdown();                                                  //(5)電機關機命令(0x80)
   void Write_Motor_Run();                                                       //(6)電機運行命令(0x88)
   void Write_Motor_Pause();                                                     //(7)電機停止命令(0x81)
@@ -28,28 +28,21 @@ public:
   void Read_Angle_MultiRound();                                                 //(20)讀取多圈角度命令(0x92)
   void Read_Angle_SingleRound();                                                //(22)讀取單圈角度命令(0x94)
 
-  void Print_Angle();             //列印出馬達回傳的角度
+  void Print_Setup_Data();        //列印出馬達設定的 id, reduction_ratio, serial_port
   void Print_Data();              //列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置
-  void Print_Setup_Data();
+  void Print_Angle();             //列印出馬達回傳的角度
   void Print_Angle_Custom();      //列印出馬達回傳的角度, 角度的負值經過計算處理
-  void Print_PID_Param();         //列印出馬達回傳的PID參數
+  void Calculate_Custom_Angle();  //角度的負值經過計算處理
   bool Find_Turn_Direction(double target_angle);
-  void Calculate_Custom_Angle();  // 角度的負值經過計算處理
   
   /*儲存馬達回傳的資料*/
   int motor_id = 0;                 //馬達ID
-  double motor_angle = 0.0;         //馬達角度
   int8_t motor_temperature = 0;     //馬達溫度
   int16_t motor_iq = 0;             //馬達轉矩電流
   int16_t motor_speed = 0;          //馬達轉速
   uint16_t motor_encoder = 0;       //馬達編碼器位置
+  double motor_angle = 0.0;         //馬達角度
   double motor_angle_custom = 0.0;  //馬達角度, 角度的負值經過計算處理
-  int motor_angle_Kp = 0;           //馬達PID參數-角度Kp
-  int motor_angle_Ki = 0;           //馬達PID參數-角度Ki
-  int motor_speed_Kp = 0;           //馬達PID參數-速度Kp
-  int motor_speed_Ki = 0;           //馬達PID參數-速度Ki
-  int motor_iq_Kp = 0;              //馬達PID參數-轉矩Kp
-  int motor_iq_Ki = 0;              //馬達PID參數-轉矩Ki
 
 private:
   void _Receive_Pack();                            //接受回傳指令

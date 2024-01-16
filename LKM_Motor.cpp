@@ -520,11 +520,14 @@ void LKM_Motor::_Unpack(byte data_receive[30], int lenth){
   }
 }
 
-void LKM_Motor::Print_Angle(){
-  Serial.print("Motor ID: "); Serial.println(motor_id);
-  Serial.print("Angle:    "); Serial.println(motor_angle);
+//列印出馬達設定的 id, reduction_ratio, serial_port
+void LKM_Motor::Print_Setup_Data(){
+  char temp_buffer[100];
+  sprintf(temp_buffer, "id: %d, reduction_ratio: %d, serial_port: %d", _id, _reduction_ratio, _serial_port);
+  Serial.println(temp_buffer);
 }
 
+//列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置
 void LKM_Motor::Print_Data(){
   Serial.print("Motor ID:         "); Serial.println(motor_id);
   Serial.print("Temperature:      "); Serial.println(motor_temperature);
@@ -533,22 +536,22 @@ void LKM_Motor::Print_Data(){
   Serial.print("Encoder position: "); Serial.println(motor_encoder);
 }
 
-void LKM_Motor::Print_Setup_Data(){
-  char temp_buffer[100];
-  sprintf(temp_buffer, "id: %d, reduction_ratio: %d, serial_port: %d", _id, _reduction_ratio, _serial_port);
-  Serial.println(temp_buffer);
+//列印出馬達回傳的角度
+void LKM_Motor::Print_Angle(){
+  Serial.print("Motor ID: "); Serial.println(motor_id);
+  Serial.print("Angle:    "); Serial.println(motor_angle);
 }
 
+//列印出馬達回傳的角度, 角度的負值經過計算處理
 void LKM_Motor::Print_Angle_Custom(){
   Serial.print("Motor ID:     "); Serial.println(motor_id);
   Serial.print("Custom Angle: "); Serial.println(motor_angle_custom);
 }
 
-void LKM_Motor::Print_PID_Param(){
-  char temp_buffer[100];
-  sprintf(temp_buffer, "angle_Kp: %d, angle_Ki: %d, speed_Kp: %d, speed_Ki: %d, iq_Kp: %d, iq_Ki: %d", motor_angle_Kp, motor_angle_Ki, motor_speed_Kp, motor_speed_Ki, motor_iq_Kp, motor_iq_Ki);
-  Serial.print("Motor ID: "); Serial.println(motor_id);
-  Serial.println(temp_buffer);
+//角度的負值經過計算處理
+void LKM_Motor::Calculate_Custom_Angle(){
+  if(motor_angle < 0) motor_angle_custom = motor_angle + (pow(2, 32) / 800);
+  else motor_angle_custom = motor_angle;
 }
 
 // direction: True -> 順時針 ; False -> 逆時針
@@ -558,9 +561,4 @@ bool LKM_Motor::Find_Turn_Direction(double target_angle){
   if(diff < 0) diff += 360.0;
   if(diff > 180) return false; // counterclockwise 逆時針
   else           return true;  // clockwise 順時針
-}
-
-void LKM_Motor::Calculate_Custom_Angle(){
-  if(motor_angle < 0) motor_angle_custom = motor_angle + (pow(2, 32) / 800);
-  else motor_angle_custom = motor_angle;
 }
