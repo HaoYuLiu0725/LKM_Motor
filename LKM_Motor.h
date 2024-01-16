@@ -27,6 +27,8 @@ public:
   void Set_Motor_Origin();                                                      //(19)設置馬達零點(0x19)
   void Read_Angle_MultiRound();                                                 //(20)讀取多圈角度命令(0x92)
   void Read_Angle_SingleRound();                                                //(22)讀取單圈角度命令(0x94)
+  void Read_Setup_Param(byte ParamID);                                          //(24)讀取設定參數命令(0x40)
+  void Read_PID_Param();                                                        //讀取PID參數
 
   void Print_Setup_Data();        //列印出馬達設定的 id, reduction_ratio, serial_port
   void Print_Data();              //列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置
@@ -38,15 +40,26 @@ public:
   /*儲存馬達回傳的資料*/
   int motor_id = 0;                 //馬達ID
   int8_t motor_temperature = 0;     //馬達溫度
-  int16_t motor_iq = 0;             //馬達轉矩電流
+  double motor_iq = 0;              //馬達轉矩電流
   int16_t motor_speed = 0;          //馬達轉速
   uint16_t motor_encoder = 0;       //馬達編碼器位置
   double motor_angle = 0.0;         //馬達角度
   double motor_angle_custom = 0.0;  //馬達角度, 角度的負值經過計算處理
 
+  uint16_t anglePidKp = 0;    //角度環Kp
+  uint16_t anglePidKi = 0;    //角度環Ki
+  uint16_t anglePidKd = 0;    //角度環Kd
+  uint16_t speedPidKp = 0;    //速度環Kp
+  uint16_t speedPidKi = 0;    //速度環Ki
+  uint16_t speedPidKd = 0;    //速度環Kd
+  uint16_t currentPidKp = 0;  //電流環Kp
+  uint16_t currentPidKi = 0;  //電流環Ki
+  uint16_t currentPidKd = 0;  //電流環Kd
+
 private:
-  void _Receive_Pack();                            //接受回傳指令
-  void _Unpack(byte data_receive[30], int lenth);  //解讀封包內容
+  void _Receive_Pack();                                 //接受回傳指令
+  void _Unpack(byte data_receive[30], int lenth);       //解讀封包內容
+  void _Unpack_Setup_Parameters(byte data_receive[30]); //解讀設定參數
   Stream* MOTOR_SERIAL = &Serial1;
   int _id = 0;              //馬達設定的id
   int _reduction_ratio = 0; //馬達的減速比

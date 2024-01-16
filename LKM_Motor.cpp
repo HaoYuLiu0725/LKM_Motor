@@ -427,6 +427,42 @@ void LKM_Motor::Read_Angle_SingleRound(){
   _Receive_Pack();                  //接收電機回覆
 }
 
+//(24)讀取設定參數命令(0x40)
+void LKM_Motor::Read_Setup_Param(byte ParamID){
+  // 發送封包
+  byte checkSum;
+  _buffer[0] = 0x3E;  //頭字節
+  _buffer[1] = 0x40;  //命令字節
+  _buffer[2] = _id;   //ID
+  _buffer[3] = 0x02;  //數據長度字節
+  checkSum = 0;
+  for (int i = 0; i <= 3; i++){
+    checkSum += _buffer[i];
+  }
+  _buffer[4] = checkSum;  //幀頭校驗字節
+  _buffer[5] = ParamID;   //參數序號
+  _buffer[6] = 0x00;      //NULL
+  checkSum = 0;
+  for (int i = 5; i <= 6; i++){
+    checkSum += _buffer[i];
+  }
+  _buffer[7] = checkSum;           //數據校驗字節
+  MOTOR_SERIAL->write(_buffer, 8); //送出封包
+  delay(1);
+  _Receive_Pack();                 //接收電機回覆
+}
+
+//讀取PID參數
+void LKM_Motor::Read_PID_Param(){
+  Read_Setup_Param(0x96); //角度環PID參數
+  delay(1);
+  Read_Setup_Param(0x97); //速度環PID參數
+  delay(1);
+  Read_Setup_Param(0x98); //電流環PID參數
+  delay(1);
+}
+
+/*----------------------------------------------------------------------------------------------------*/
 //接受回傳指令
 void LKM_Motor::_Receive_Pack(){
   byte temp[1]; //每次接收進來之byte
@@ -517,6 +553,31 @@ void LKM_Motor::_Unpack(byte data_receive[30], int lenth){
     motor_id = (int)data_receive[2]; //馬達ID
     uint32_t circleAngle = (uint32_t)((data_receive[8]<<24) + (data_receive[7]<<16) + (data_receive[6]<<8) + data_receive[5]);
     motor_angle = (double)circleAngle / (100.0 * (double)_reduction_ratio);
+  }
+  // (24)讀取設定參數命令(0x40)
+  else if (data_receive[1] == 0x40){
+    motor_id = (int)data_receive[2]; //馬達ID
+    _Unpack_Setup_Parameters(data_receive);
+  }
+}
+
+//解讀設定參數
+void LKM_Motor::_Unpack_Setup_Parameters(byte data_receive[30]){
+  byte ParamID = data_receive[5];
+  if(ParamID == 0x96){      //角度環PID參數
+    anglePidKp = (uint16_t)((data_receive[7]<<8) + (data_receive[6]));
+    anglePidKi = (uint16_t)((data_receive[9]<<8) + (data_receive[8]));
+    anglePidKd = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
+  }
+  else if(ParamID == 0x97){ //速度環PID參數
+    speedPidKp = (uint16_t)((data_receive[7]<<8) + (data_receive[6]));
+    speedPidKi = (uint16_t)((data_receive[9]<<8) + (data_receive[8]));
+    speedPidKd = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
+  }
+  else if(ParamID == 0x98){ //電流環PID參數
+    currentPidKp = (uint16_t)((data_receive[7]<<8) + (data_receive[6]));
+    currentPidKi = (uint16_t)((data_receive[9]<<8) + (data_receive[8]));
+    currentPidKd = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
   }
 }
 
