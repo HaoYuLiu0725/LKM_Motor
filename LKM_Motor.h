@@ -28,11 +28,6 @@ public:
   void Read_Angle_MultiRound();                                                 //(20)讀取多圈角度命令(0x92)
   void Read_Angle_SingleRound();                                                //(22)讀取單圈角度命令(0x94)
 
-
-  void Read_PID_Param(); //讀取PID參數
-  void Write_PID_Into_RAM(int anglePidKp, int anglePidKi, int speedPidKp, int speedPidKi, int iqPidKp, int iqPidKi);  //(2)寫入PID到RAM, 斷電後寫入參數失效
-  void Write_PID_Into_ROM(int anglePidKp, int anglePidKi, int speedPidKp, int speedPidKi, int iqPidKp, int iqPidKi);  //(3)讀取PID到ROM, 斷電後寫入參數仍然有效
-
   void Print_Angle();             //列印出馬達回傳的角度
   void Print_Data();              //列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置
   void Print_Setup_Data();
