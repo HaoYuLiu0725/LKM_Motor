@@ -34,6 +34,7 @@ public:
   void Print_Data();              //列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置
   void Print_Angle();             //列印出馬達回傳的角度
   void Print_Angle_Custom();      //列印出馬達回傳的角度, 角度的負值經過計算處理
+  void Print_PID_Param();         //列印出馬達的PID參數
   void Calculate_Custom_Angle();  //角度的負值經過計算處理
   bool Find_Turn_Direction(double target_angle);
   

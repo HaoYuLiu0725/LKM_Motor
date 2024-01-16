@@ -609,6 +609,20 @@ void LKM_Motor::Print_Angle_Custom(){
   Serial.print("Custom Angle: "); Serial.println(motor_angle_custom);
 }
 
+//列印出馬達的PID參數
+void LKM_Motor::Print_PID_Param(){
+  char angle_pid_buffer[100];
+  char speed_pid_buffer[100];
+  char current_pid_buffer[100];
+  sprintf(angle_pid_buffer,   "Angle PID   -- Kp: %d, Ki: %d, Kd: %d", anglePidKp, anglePidKi, anglePidKd);
+  sprintf(speed_pid_buffer,   "speed PID   -- Kp: %d, Ki: %d, Kd: %d", speedPidKp, speedPidKi, speedPidKd);
+  sprintf(current_pid_buffer, "current PID -- Kp: %d, Ki: %d, Kd: %d", currentPidKp, currentPidKi, currentPidKd);
+  Serial.print("Motor ID: "); Serial.println(motor_id);
+  Serial.println(angle_pid_buffer);
+  Serial.println(speed_pid_buffer);
+  Serial.println(current_pid_buffer);
+}         
+
 //角度的負值經過計算處理
 void LKM_Motor::Calculate_Custom_Angle(){
   if(motor_angle < 0) motor_angle_custom = motor_angle + (pow(2, 32) / 800);
