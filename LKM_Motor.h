@@ -11,25 +11,27 @@ public:
   LKM_Motor(int id, int reduction_ratio, int serial_port);
   void Serial_Init();
   void Change_Baudrate(int baudrate); //更改馬達baudrate
-  void Read_PID_Param();              //(1)讀取PID參數
-  void Write_PID_Into_RAM(int anglePidKp, int anglePidKi, int speedPidKp, int speedPidKi, int iqPidKp, int iqPidKi);  //(2)寫入PID到RAM, 斷電後寫入參數失效
-  void Write_PID_Into_ROM(int anglePidKp, int anglePidKi, int speedPidKp, int speedPidKi, int iqPidKp, int iqPidKi);  //(3)讀取PID到ROM, 斷電後寫入參數仍然有效
-  void Set_Motor_Origin();                                                      //(8)設置馬達零點
-  void Read_Angle_MultiRound();                                                 //(9)讀取多圈角度命令
-  void Read_Angle_SingleRound();                                                //(10)讀取單圈角度命令
-  void Write_Motor_Shutdown();                                                  //(15)電機關機命令
-  void Write_Motor_Pause();                                                     //(16)電機停止命令
-  void Write_Motor_Run();                                                       //(17)電機運行命令
-  void Write_Torque_Current(double current);                                    //(19)轉矩閉環控制命令(current: -32~32 A)
-  void Write_Speed(double speed);                                               //(20)速度閉環控制命令
-  void Write_Angle_MultiRound(double angle);                                    //(21)多圈位置閉環控制命令1
-  void Write_Angle_MultiRound(double angle, double max_speed);                  //(22)多圈位置閉環控制命令2
-  void Write_Angle_SingleRound(bool direction, double angle);                   //(23)單圈位置閉環控制命令1, direction: True -> 順時針 ; False -> 逆時針
-  void Write_Angle_SingleRound(bool direction, double angle, double max_speed); //(24)單圈位置閉環控制命令2, direction: True -> 順時針 ; False -> 逆時針
+  void Write_Motor_Shutdown();                                                  //(5)電機關機命令
+  void Write_Motor_Run();                                                       //(6)電機運行命令
+  void Write_Motor_Pause();                                                     //(7)電機停止命令
+  void Write_Torque_Current(double current);                                    //(10)轉矩閉環控制命令(current: -32~32 A)
+  void Write_Speed(double speed);                                               //(11)速度閉環控制命令
+  void Write_Angle_MultiRound(double angle);                                    //(12)多圈位置閉環控制命令1
+  void Write_Angle_MultiRound(double angle, double max_speed);                  //(13)多圈位置閉環控制命令2
+  void Write_Angle_SingleRound(bool direction, double angle);                   //(14)單圈位置閉環控制命令1, direction: True -> 順時針 ; False -> 逆時針
+  void Write_Angle_SingleRound(bool direction, double angle, double max_speed); //(15)單圈位置閉環控制命令2, direction: True -> 順時針 ; False -> 逆時針
   void Write_Angle_SingleRound(double angle);                                   //轉向自動-單圈位置閉環控制命令1(往角度小的方向走)
   void Write_Angle_SingleRound(double angle, double max_speed);                 //轉向自動-單圈位置閉環控制命令2(往角度小的方向走)
-  void Write_Angle_Increment(double angle_increment);                           //(25)增量位置閉環控制命令1
-  void Write_Angle_Increment(double angle_increment, double max_speed);         //(26)增量位置閉環控制命令2
+  void Write_Angle_Increment(double angle_increment);                           //(16)增量位置閉環控制命令1
+  void Write_Angle_Increment(double angle_increment, double max_speed);         //(17)增量位置閉環控制命令2
+  void Set_Motor_Origin();                                                      //(19)設置馬達零點
+  void Read_Angle_MultiRound();                                                 //(20)讀取多圈角度命令
+  void Read_Angle_SingleRound();                                                //(22)讀取單圈角度命令
+
+
+  void Read_PID_Param(); //讀取PID參數
+  void Write_PID_Into_RAM(int anglePidKp, int anglePidKi, int speedPidKp, int speedPidKi, int iqPidKp, int iqPidKi);  //(2)寫入PID到RAM, 斷電後寫入參數失效
+  void Write_PID_Into_ROM(int anglePidKp, int anglePidKi, int speedPidKp, int speedPidKi, int iqPidKp, int iqPidKi);  //(3)讀取PID到ROM, 斷電後寫入參數仍然有效
 
   void Print_Angle();             //列印出馬達回傳的角度
   void Print_Data();              //列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置
