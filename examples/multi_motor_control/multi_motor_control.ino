@@ -23,7 +23,6 @@ void setup() {
     "RS485_1" is using Serial5 for communication */
     MotorArr[i].Print_Setup_Data();     // print out motor's setup data (id, reduction_ratio, serial_port)
     MotorArr[i].Serial_Init();          // initialize the motor's serial port
-    MotorArr[i].Write_Motor_Run();      // (OPTIONAL) send command to motor to hold current position 
   }
 }
 
