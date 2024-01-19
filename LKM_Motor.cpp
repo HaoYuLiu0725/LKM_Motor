@@ -130,8 +130,10 @@ void LKM_Motor::Write_Torque_Current(double current){
   }
   _buffer[7] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 8);  //送出封包
-  delay(1);
-  _Receive_Pack();                  //接收電機回覆
+  if(_need_receive){
+    delay(1);
+    _Receive_Pack();                //接收電機回覆
+  }
 }
 
 //(11)速度閉環控制命令(0xA2)
@@ -159,8 +161,10 @@ void LKM_Motor::Write_Speed(double speed){
   }
   _buffer[9] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 10); //送出封包
-  delay(1);
-  _Receive_Pack();                  //接收電機回覆
+  if(_need_receive){
+    delay(1);
+    _Receive_Pack();                //接收電機回覆
+  }
 }
 
 //(12)多圈位置閉環控制命令1(0xA3)
@@ -192,8 +196,10 @@ void LKM_Motor::Write_Angle_MultiRound(double angle){
   }
   _buffer[13] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 14); //送出封包
-  delay(1);
-  _Receive_Pack();                  //接收電機回覆
+  if(_need_receive){
+    delay(1);
+    _Receive_Pack();                //接收電機回覆
+  }
 }
 
 //(13)多圈位置閉環控制命令2(0xA4)
@@ -230,8 +236,10 @@ void LKM_Motor::Write_Angle_MultiRound(double angle, double max_speed){
   }
   _buffer[17] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 18); //送出封包
-  delay(1);
-  _Receive_Pack();                  //接收電機回覆
+  if(_need_receive){
+    delay(1);
+    _Receive_Pack();                //接收電機回覆
+  }
 }
 
 //(14)單圈位置閉環控制命令1(0xA5), direction: True -> 順時針 ; False -> 逆時針
@@ -260,8 +268,10 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle){
   }
   _buffer[9] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 10); //送出封包
-  delay(1);
-  _Receive_Pack();                  //接收電機回覆
+  if(_need_receive){
+    delay(1);
+    _Receive_Pack();                //接收電機回覆
+  }
 }
 
 //(15)單圈位置閉環控制命令2(0xA6), direction: True -> 順時針 ; False -> 逆時針
@@ -295,8 +305,10 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle, double max
   }
   _buffer[13] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 14); //送出封包
-  delay(1);
-  _Receive_Pack();                  //接收電機回覆
+  if(_need_receive){
+    delay(1);
+    _Receive_Pack();                //接收電機回覆
+  }
 }
 
 //轉向自動-單圈位置閉環控制命令1(往角度小的方向走)
@@ -338,8 +350,10 @@ void LKM_Motor::Write_Angle_Increment(double angle_increment){
   }
   _buffer[9] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 10); //送出封包
-  delay(1);
-  _Receive_Pack();                  //接收電機回覆
+  if(_need_receive){
+    delay(1);
+    _Receive_Pack();                //接收電機回覆
+  }
 }
 
 //(17)增量位置閉環控制命令2(0xA8)
@@ -372,8 +386,10 @@ void LKM_Motor::Write_Angle_Increment(double angle_increment, double max_speed){
   }
   _buffer[13] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 14); //送出封包
-  delay(1);
-  _Receive_Pack();                  //接收電機回覆
+  if(_need_receive){
+    delay(1);
+    _Receive_Pack();                //接收電機回覆
+  }
 }
 
 //(19)設置馬達零點(0x19)
@@ -489,7 +505,7 @@ void LKM_Motor::Write_Setup_Param_Into_RAM(byte ParamID, byte data1, byte data2,
   _buffer[12] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 13); //送出封包
   delay(1);
-  _Receive_Pack();                 //接收電機回覆
+  _Receive_Pack();                  //接收電機回覆
 }
 
 //(26)寫入設定參數到ROM(0x44), 斷電後仍然有效
@@ -519,7 +535,7 @@ void LKM_Motor::Write_Setup_Param(byte ParamID, byte data1, byte data2, byte dat
   _buffer[12] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 13); //送出封包
   delay(1);
-  _Receive_Pack();                 //接收電機回覆
+  _Receive_Pack();                  //接收電機回覆
 }
 
 /*----------------------------------------------------------------------------------------------------*/
@@ -721,4 +737,9 @@ bool LKM_Motor::Find_Turn_Direction(double target_angle){
   if(diff < 0) diff += 360.0;
   if(diff > 180) return false; // counterclockwise 逆時針
   else           return true;  // clockwise 順時針
+}
+
+//設定非讀取資訊的指令是否需要解封包
+void LKM_Motor::Change_Need_Receive(bool need_receive){
+  _need_receive = need_receive;
 }
