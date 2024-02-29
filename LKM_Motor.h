@@ -27,12 +27,12 @@ public:
   void Set_Motor_Origin();                                                      //(19)設置馬達零點(0x19)
   void Read_Angle_MultiRound();                                                 //(20)讀取多圈角度命令(0x92)
   void Read_Angle_SingleRound();                                                //(22)讀取單圈角度命令(0x94)
-  void Read_Setup_Param(byte ParamID);                                          //(24)讀取設定參數命令(0x40)
-  void Read_PID_Param();                                                        //讀取PID參數
-  //(25)寫入設定參數到RAM(0x42), 斷電後失效
-  void Write_Setup_Param_Into_RAM(byte ParamID, byte data1, byte data2, byte data3, byte data4, byte data5, byte data6);
-  //(26)寫入設定參數到ROM(0x44), 斷電後仍然有效
-  void Write_Setup_Param(byte ParamID, byte data1, byte data2, byte data3, byte data4, byte data5, byte data6);
+  // void Read_Setup_Param(byte ParamID);                                          //(24)讀取設定參數命令(0x40)
+  // void Read_PID_Param();                                                        //讀取PID參數
+  // //(25)寫入設定參數到RAM(0x42), 斷電後失效
+  // void Write_Setup_Param_Into_RAM(byte ParamID, byte data1, byte data2, byte data3, byte data4, byte data5, byte data6);
+  // //(26)寫入設定參數到ROM(0x44), 斷電後仍然有效
+  // void Write_Setup_Param(byte ParamID, byte data1, byte data2, byte data3, byte data4, byte data5, byte data6);
 
   void Print_Setup_Data();        //列印出馬達設定的 id, reduction_ratio, serial_port
   void Print_Data();              //列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置
@@ -65,8 +65,8 @@ public:
 private:
   void _Receive_Pack();                                 //接受回傳指令
   void _Unpack(byte data_receive[30], int lenth);       //解讀封包內容
-  void _Unpack_Read_Setup_Param(byte data_receive[30]); //解讀回傳的設定參數
-  void _Unpack_Write_Setup_Param(byte data_receive[30]);//解讀設定參數是否成功
+  // void _Unpack_Read_Setup_Param(byte data_receive[30]); //解讀回傳的設定參數
+  // void _Unpack_Write_Setup_Param(byte data_receive[30]);//解讀設定參數是否成功
   Stream* MOTOR_SERIAL = &Serial1;
   int _id = 0;                //馬達設定的id
   int _reduction_ratio = 0;   //馬達的減速比
