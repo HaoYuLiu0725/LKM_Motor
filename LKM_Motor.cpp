@@ -725,7 +725,7 @@ void LKM_Motor::Print_PID_Param(){
 
 //角度的負值經過計算處理
 void LKM_Motor::Calculate_Custom_Angle(){
-  if(motor_angle < 0) motor_angle_custom = motor_angle + (pow(2, 32) / 800);
+  if(motor_angle < 0) motor_angle_custom = motor_angle + (pow(2, 32) / _reduction_ratio / 100);
   else motor_angle_custom = motor_angle;
 }
 
