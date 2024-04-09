@@ -2,7 +2,7 @@
 #define LKM_Motor_H
 
 #include "Arduino.h"
-#define BAUDRATE 4000000 //Use motor's MAX baudrate as default
+#define LKM_Motor_BAUDRATE 4000000 //Use motor's MAX baudrate as default
 
 class LKM_Motor
 {
@@ -68,14 +68,14 @@ private:
   // void _Unpack_Read_Setup_Param(byte data_receive[30]); //解讀回傳的設定參數
   // void _Unpack_Write_Setup_Param(byte data_receive[30]);//解讀設定參數是否成功
   Stream* MOTOR_SERIAL = &Serial1;
-  int _id = 0;                //馬達設定的id
-  int _reduction_ratio = 0;   //馬達的減速比
-  int _serial_port = 0;       //馬達使用的serial port
-  int _baudrate = BAUDRATE;   //馬達設定的baudrate
-  byte _buffer[20];           //要傳送之封包
-  int _count_RX = 0;          //計算儲存讀入封包之長度
-  byte _readin[50];           //完整儲存讀入之封包
-  bool _need_receive = false; //設定非讀取資訊的指令是否需要解封包
+  int _id = 0;                        //馬達設定的id
+  int _reduction_ratio = 0;           //馬達的減速比
+  int _serial_port = 0;               //馬達使用的serial port
+  int _baudrate = LKM_Motor_BAUDRATE; //馬達設定的baudrate
+  byte _buffer[20];                   //要傳送之封包
+  int _count_RX = 0;                  //計算儲存讀入封包之長度
+  byte _readin[50];                   //完整儲存讀入之封包
+  bool _need_receive = false;         //設定非讀取資訊的指令是否需要解封包
 };
 
 #endif
