@@ -131,7 +131,7 @@ void LKM_Motor::Write_Torque_Current(double current){
   _buffer[7] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 8);  //送出封包
   if(_need_receive){
-    delay(1);
+    delayMicroseconds(delay_time);
     _Receive_Pack();                //接收電機回覆
   }
 }
@@ -162,7 +162,7 @@ void LKM_Motor::Write_Speed(double speed){
   _buffer[9] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 10); //送出封包
   if(_need_receive){
-    delay(1);
+    delayMicroseconds(delay_time);
     _Receive_Pack();                //接收電機回覆
   }
 }
@@ -197,7 +197,7 @@ void LKM_Motor::Write_Angle_MultiRound(double angle){
   _buffer[13] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 14); //送出封包
   if(_need_receive){
-    delay(1);
+    delayMicroseconds(delay_time);
     _Receive_Pack();                //接收電機回覆
   }
 }
@@ -237,7 +237,7 @@ void LKM_Motor::Write_Angle_MultiRound(double angle, double max_speed){
   _buffer[17] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 18); //送出封包
   if(_need_receive){
-    delay(1);
+    delayMicroseconds(delay_time);
     _Receive_Pack();                //接收電機回覆
   }
 }
@@ -269,7 +269,7 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle){
   _buffer[9] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 10); //送出封包
   if(_need_receive){
-    delay(1);
+    delayMicroseconds(delay_time);
     _Receive_Pack();                //接收電機回覆
   }
 }
@@ -306,7 +306,7 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle, double max
   _buffer[13] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 14); //送出封包
   if(_need_receive){
-    delay(1);
+    delayMicroseconds(delay_time);
     _Receive_Pack();                //接收電機回覆
   }
 }
@@ -351,7 +351,7 @@ void LKM_Motor::Write_Angle_Increment(double angle_increment){
   _buffer[9] = checkSum;            //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 10); //送出封包
   if(_need_receive){
-    delay(1);
+    delayMicroseconds(delay_time);
     _Receive_Pack();                //接收電機回覆
   }
 }
@@ -387,7 +387,7 @@ void LKM_Motor::Write_Angle_Increment(double angle_increment, double max_speed){
   _buffer[13] = checkSum;           //數據校驗字節
   MOTOR_SERIAL->write(_buffer, 14); //送出封包
   if(_need_receive){
-    delay(1);
+    delayMicroseconds(delay_time);
     _Receive_Pack();                //接收電機回覆
   }
 }
@@ -421,7 +421,7 @@ void LKM_Motor::Read_Angle_MultiRound(){
   }
   _buffer[4] = checkSum;            //幀頭校驗字節
   MOTOR_SERIAL->write(_buffer, 5);  //送出封包
-  delay(1);
+  delayMicroseconds(delay_time);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -439,7 +439,7 @@ void LKM_Motor::Read_Angle_SingleRound(){
   }
   _buffer[4] = checkSum;            //幀頭校驗字節
   MOTOR_SERIAL->write(_buffer, 5);  //送出封包
-  delay(1);
+  delayMicroseconds(delay_time);
   _Receive_Pack();                  //接收電機回覆
 }
 
@@ -464,18 +464,18 @@ void LKM_Motor::Read_Angle_SingleRound(){
 //   }
 //   _buffer[7] = checkSum;           //數據校驗字節
 //   MOTOR_SERIAL->write(_buffer, 8); //送出封包
-//   delay(1);
+//   delayMicroseconds(delay_time);
 //   _Receive_Pack();                 //接收電機回覆
 // }
 
 // //讀取PID參數
 // void LKM_Motor::Read_PID_Param(){
 //   Read_Setup_Param(0x96); //角度環PID參數
-//   delay(1);
+//   delayMicroseconds(delay_time);
 //   Read_Setup_Param(0x97); //速度環PID參數
-//   delay(1);
+//   delayMicroseconds(delay_time);
 //   Read_Setup_Param(0x98); //電流環PID參數
-//   delay(1);
+//   delayMicroseconds(delay_time);
 // }
 
 // //(25)寫入設定參數到RAM(0x42), 斷電後失效
@@ -504,7 +504,7 @@ void LKM_Motor::Read_Angle_SingleRound(){
 //   }
 //   _buffer[12] = checkSum;           //數據校驗字節
 //   MOTOR_SERIAL->write(_buffer, 13); //送出封包
-//   delay(1);
+//   delayMicroseconds(delay_time);
 //   _Receive_Pack();                  //接收電機回覆
 // }
 
@@ -534,7 +534,7 @@ void LKM_Motor::Read_Angle_SingleRound(){
 //   }
 //   _buffer[12] = checkSum;           //數據校驗字節
 //   MOTOR_SERIAL->write(_buffer, 13); //送出封包
-//   delay(1);
+//   delayMicroseconds(delay_time);
 //   _Receive_Pack();                  //接收電機回覆
 // }
 
@@ -742,3 +742,162 @@ bool LKM_Motor::Find_Turn_Direction(double target_angle){
 void LKM_Motor::Change_Need_Receive(bool need_receive){
   _need_receive = need_receive;
 }
+
+/*----------TEMP---------------------------------------------------------------------------------------------*/
+void LKM_Motor::Read_UI_Setup(){
+  byte checkSum;
+  _buffer[0] = 0x3E;  //頭字節
+  _buffer[1] = 0x14;  //命令字節
+  _buffer[2] = _id;   //ID
+  _buffer[3] = 0x00;  //數據長度字節
+  checkSum = 0;
+  for (int i = 0; i <= 3; i++){
+    checkSum += _buffer[i];
+  }
+  _buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  delayMicroseconds(delay_time);
+  _Receive_UI_Setup();              //接收電機回覆
+}
+
+void LKM_Motor::_Receive_UI_Setup(){
+  byte _temp_readin[100];
+  byte temp[1]; //每次接收進來之byte
+  byte checkSum;
+
+  _count_RX = 0;
+  while(MOTOR_SERIAL->available() > 0){
+    MOTOR_SERIAL->readBytes(temp, 1); //讀取輸入之byte
+    Serial.println(temp[0], HEX);
+    // 確認是否為頭字節
+    if(temp[0] == 0x3E){
+      Serial.println("head");
+      _temp_readin[0] = temp[0];
+      _count_RX = 1;
+    }
+    // 幀頭校驗字節
+    else if(_count_RX == 4){
+      Serial.println("headercheck");
+      _temp_readin[_count_RX] = temp[0];
+      
+      checkSum = 0;
+      for(int i = 0; i <= 3; i++){
+        checkSum += _temp_readin[i];
+      }
+      if(checkSum != _temp_readin[_count_RX]){
+        Serial.println("===== Packet Error: Header Checksum Error! =====");
+        break;
+      }
+      _count_RX++;
+    }
+    // 數據校驗字節
+    else if(_count_RX > 4 && _count_RX == _temp_readin[3]+5){
+      Serial.println("datacheck");
+      _temp_readin[_count_RX] = temp[0];
+      
+      checkSum = 0;
+      for(int i = 5; i <= _count_RX-1; i++){
+        checkSum += _temp_readin[i];
+      }
+      
+      if(checkSum != _temp_readin[_count_RX]){
+        Serial.println("===== Packet Error: Data Checksum Error! =====");
+        break;
+      }
+      else{
+        Serial.println("Unpack");
+        _Unpack_UI_Setup(_temp_readin, _count_RX); //傳送去解讀封包
+        break;
+      }
+    }
+    else{
+      Serial.println("data");
+      _temp_readin[_count_RX] = temp[0];
+      _count_RX++;
+    }
+  }
+  while(MOTOR_SERIAL->read() >= 0){} //clear serialbuffer
+}
+
+void LKM_Motor::_Unpack_UI_Setup(byte data_receive[100], int lenth){
+  for(int i=0; i<lenth; i++){
+    Serial.println(data_receive[i], HEX);
+  }
+}
+
+void LKM_Motor::Write_UI_Setup(
+uint16_t anglePidKp = 0, uint16_t anglePidKi = 0, uint16_t anglePidKd = 0,
+uint16_t speedPidKp = 0, uint16_t speedPidKi = 0, uint16_t speedPidKd = 0,
+uint16_t currentPidKp = 0, uint16_t currentPidKi = 0, uint16_t currentPidKd = 0){
+  Serial.print("Now ID: ");Serial.println(_id);
+  byte checkSum;
+  byte temp_buffer[200] = {
+  0x3E, 0x15, 0x01, 0x68, 0xBC, 0x01, 0x00, 0x09, 0x04, 0x00, 
+  0x00, 0x02, 0x00, 0x02, 0x02, 0x00, 0x00, 0x00, 0x01, 0x64, 
+  0x64, 0xBC, 0x02, 0x70, 0x17, 0x58, 0x02, 0x64, 0x00, 0xC8, 
+  0x00, 0x64, 0x00, 0x01, 0xFF, 0xE0, 0x15, 0x00, 0x01, 0x4C, 
+  0x04, 0x6C, 0x07, 0xDC, 0x05, 0x0A, 0x00, 0x64, 0x00, 0xC8, 
+  0x00, 0x64, 0x00, 0xC4, 0x09, 
+  
+  0xC8, 0x00, 0x0A, 0x00, 0x00, 0x00, 
+  0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 
+  0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 
+  
+  0xD0, 0x07, 0xFF, 0xFF, 0x80, 0xA2, 0x19, 0x00, 0xFF, 0xFF, 
+  0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+  0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+  0x00, 0x00, 0x78, 0x56, 0xAA, 0x55, 0x1A};
+
+  temp_buffer[2] = _id;         //ID
+  checkSum = 0;
+  for (int i = 0; i <= 3; i++){
+    checkSum += temp_buffer[i];
+  }
+  temp_buffer[4] = checkSum;    //幀頭校驗字節
+  temp_buffer[5] = _id;         //ID
+
+  temp_buffer[55] = (anglePidKp>>0) & 0xFF;
+  temp_buffer[56] = (anglePidKp>>8) & 0xFF;
+  temp_buffer[57] = (anglePidKi>>0) & 0xFF;
+  temp_buffer[58] = (anglePidKi>>8) & 0xFF;
+  temp_buffer[59] = (anglePidKd>>0) & 0xFF;
+  temp_buffer[60] = (anglePidKd>>8) & 0xFF;
+
+  temp_buffer[61] = (speedPidKp>>0) & 0xFF;
+  temp_buffer[62] = (speedPidKp>>8) & 0xFF;
+  temp_buffer[63] = (speedPidKi>>0) & 0xFF;
+  temp_buffer[64] = (speedPidKi>>8) & 0xFF;
+  temp_buffer[65] = (speedPidKd>>0) & 0xFF;
+  temp_buffer[66] = (speedPidKd>>8) & 0xFF;
+
+  temp_buffer[67] = (currentPidKp>>0) & 0xFF;
+  temp_buffer[68] = (currentPidKp>>8) & 0xFF;
+  temp_buffer[69] = (currentPidKi>>0) & 0xFF;
+  temp_buffer[70] = (currentPidKi>>8) & 0xFF;
+  temp_buffer[71] = (currentPidKd>>0) & 0xFF;
+  temp_buffer[72] = (currentPidKd>>8) & 0xFF;
+
+  checkSum = 0;
+  for (int i = 5; i <= 108; i++){
+    checkSum += temp_buffer[i];
+  }
+  temp_buffer[109] = (checkSum>>0) & 0xFF;
+  MOTOR_SERIAL->write(temp_buffer, 110);  //送出封包
+  delayMicroseconds(delay_time);
+  Read_Receive();
+}
+
+void LKM_Motor::Read_Receive(){
+  byte temp[1]; //每次接收進來之byte
+
+  while(MOTOR_SERIAL->available() > 0){
+    MOTOR_SERIAL->readBytes(temp, 1); //讀取輸入之byte
+    Serial.print(temp[0], HEX);
+    Serial.print(" ");
+  }
+  Serial.println(" ");
+  while(MOTOR_SERIAL->read() >= 0){} //clear serialbuffer
+  delayMicroseconds(delay_time);
+  Serial.println("Read Complete");
+}
+/*------------------------*/
