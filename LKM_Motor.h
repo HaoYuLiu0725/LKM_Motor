@@ -42,6 +42,8 @@ public:
   void Calculate_Custom_Angle();  //角度的負值經過計算處理
   bool Find_Turn_Direction(double target_angle);
   void Change_Need_Receive(bool need_receive); //設定非讀取資訊的指令是否需要解封包
+
+  int delay_time = 1000; //[us]
   
   /*儲存馬達回傳的資料*/
   int motor_id = 0;                 //馬達ID
