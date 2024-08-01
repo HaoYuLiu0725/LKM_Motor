@@ -2,8 +2,8 @@
 LK tech's motor control library using Teensy4.0 with Arduino IDE.  
 **Note:  
 Recommand using "Motor Communication Control" PCB in NTU ASR-LAB,  
-the "RS485_1" ports is using "Serial5" for communication,  
-the "RS485_2" ports is using "Serial3" for communication,**
+the "RS485_1" ports are using "Serial5" for communication,  
+the "RS485_2" ports are using "Serial3" for communication,**
 
 ### Contents
 * [Install](#install)
