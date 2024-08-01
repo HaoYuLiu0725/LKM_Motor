@@ -9,12 +9,14 @@ class LKM_Motor
 public:
   LKM_Motor();
   LKM_Motor(int id, int reduction_ratio, int serial_port);
+  LKM_Motor(int id, int reduction_ratio, int serial_port, double Kt);
   void Serial_Init();
   void Change_Baudrate(int baudrate);                                           //更改馬達baudrate
   void Write_Motor_Shutdown();                                                  //(5)電機關機命令(0x80)
   void Write_Motor_Run();                                                       //(6)電機運行命令(0x88)
   void Write_Motor_Pause();                                                     //(7)電機停止命令(0x81)
-  void Write_Torque_Current(double current);                                    //(10)轉矩閉環控制命令(0xA1), current: -32~32 A
+  void Write_Torque_Current(double current);                                    //(10)轉矩閉環控制命令(0xA1), current: -32~32
+  void Write_Torque(double torque);                                             //轉矩控制, torque [N*m] = Kt * I
   void Write_Speed(double speed);                                               //(11)速度閉環控制命令(0xA2)
   void Write_Angle_MultiRound(double angle);                                    //(12)多圈位置閉環控制命令1(0xA3)
   void Write_Angle_MultiRound(double angle, double max_speed);                  //(13)多圈位置閉環控制命令2(0xA4)
@@ -41,9 +43,10 @@ public:
   void Print_PID_Param();         //列印出馬達的PID參數
   void Calculate_Custom_Angle();  //角度的負值經過計算處理
   bool Find_Turn_Direction(double target_angle);
-  void Change_Need_Receive(bool need_receive); //設定非讀取資訊的指令是否需要解封包
+  void Set_Need_Receive(bool need_receive); //設定非讀取資訊的指令是否需要解封包
+  void Set_Kt(double Kt);         //設定馬達的轉矩常數Kt
 
-  int delay_time = 1000; //[us]
+  int delay_time = 250; //[us]
   
   /*儲存馬達回傳的資料*/
   int motor_id = 0;                 //馬達ID
@@ -63,7 +66,7 @@ public:
   uint16_t currentPidKp = 0;  //電流環Kp
   uint16_t currentPidKi = 0;  //電流環Ki
   uint16_t currentPidKd = 0;  //電流環Kd
-
+  
 private:
   void _Receive_Pack();                                 //接受回傳指令
   void _Unpack(byte data_receive[30], int lenth);       //解讀封包內容
@@ -73,6 +76,7 @@ private:
   int _id = 0;                        //馬達設定的id
   int _reduction_ratio = 0;           //馬達的減速比
   int _serial_port = 0;               //馬達使用的serial port
+  double _Kt = 0.0;                   //馬達的轉矩常數Kt
   int _baudrate = LKM_Motor_BAUDRATE; //馬達設定的baudrate
   byte _buffer[20];                   //要傳送之封包
   int _count_RX = 0;                  //計算儲存讀入封包之長度

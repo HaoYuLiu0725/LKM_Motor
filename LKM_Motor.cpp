@@ -4,12 +4,21 @@ LKM_Motor::LKM_Motor(){
   _id = 0;
   _reduction_ratio = 0;
   _serial_port = 0;
+  _Kt = 0.0;
 }
 
 LKM_Motor::LKM_Motor(int id, int reduction_ratio, int serial_port){
   _id = id;
   _reduction_ratio = reduction_ratio;
   _serial_port = serial_port;
+  _Kt = 0.0;
+}
+
+LKM_Motor::LKM_Motor(int id, int reduction_ratio, int serial_port, double Kt){
+  _id = id;
+  _reduction_ratio = reduction_ratio;
+  _serial_port = serial_port;
+  _Kt = Kt;
 }
 
 void LKM_Motor::Serial_Init(){
@@ -107,9 +116,10 @@ void LKM_Motor::Write_Motor_Pause(){
   MOTOR_SERIAL->write(_buffer, 5);  //送出封包
 }
 
-//(10)轉矩閉環控制命令(0xA1), current: -32~32 A
+//(10)轉矩閉環控制命令(0xA1), current: -33~33 A
 void LKM_Motor::Write_Torque_Current(double current){
-  int16_t iqControl = (int16_t)(current * 2000 / 32);
+  // 控制值 iqControl 為 int16_t 類型，數值範圍 -2048 ~ 2048
+  int16_t iqControl = (int16_t)(current / 33 * 2048);
 
   // 發送封包
   byte checkSum;
@@ -134,6 +144,12 @@ void LKM_Motor::Write_Torque_Current(double current){
     delayMicroseconds(delay_time);
     _Receive_Pack();                //接收電機回覆
   }
+}
+
+//轉矩控制, torque [N*m] = Kt * I
+void LKM_Motor::Write_Torque(double torque){
+  double current = torque / _Kt;
+  Write_Torque_Current(current);
 }
 
 //(11)速度閉環控制命令(0xA2)
@@ -739,6 +755,10 @@ bool LKM_Motor::Find_Turn_Direction(double target_angle){
 }
 
 //設定非讀取資訊的指令是否需要解封包
-void LKM_Motor::Change_Need_Receive(bool need_receive){
+void LKM_Motor::Set_Need_Receive(bool need_receive){
   _need_receive = need_receive;
+}
+
+void LKM_Motor::Set_Kt(double Kt){
+  _Kt = Kt;
 }
