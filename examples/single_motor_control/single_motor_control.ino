@@ -28,7 +28,7 @@ void loop() {
   digitalWrite(11, LOW);                  // LED2 OFF
   Serial.println("-> read ~");
   motor1.Read_Angle_MultiRound();         // send command to motor, read current angle
-  motor1.Print_Angle();                   // print out motor's returned current angle data
+  motor1.Print_Angle_Custom();            // print out motor's returned current angle data, negative values of angles are processed through calculations.
   delay(2000);
 
   digitalWrite(12, HIGH);                 // LED3 ON
@@ -39,6 +39,6 @@ void loop() {
   digitalWrite(12, LOW);                  // LED3 OFF
   Serial.println("-> read ~");
   motor1.Read_Angle_MultiRound();         // send command to motor, read current angle
-  motor1.Print_Angle();                   // print out motor's returned current angle data
+  motor1.Print_Angle_Custom();            // print out motor's returned current angle data, negative values of angles are processed through calculations.
   delay(2000);
 }

@@ -36,7 +36,7 @@ void loop() {
     sprintf(temp_buffer, "-> Read Motor ID: %d's angle", i+1);
     Serial.println(temp_buffer);
     MotorArr[i].Read_Angle_MultiRound();                      // send command to motor, read current angle
-    MotorArr[i].Print_Angle();                                // print out motor's returned current angle data
+    MotorArr[i].Print_Angle_Custom();                         // print out motor's returned current angle data, negative values of angles are processed through calculations.
     delay(2000);
 
     sprintf(temp_buffer, "-> Motor ID: %d go to 0 !", i+1);
@@ -47,7 +47,7 @@ void loop() {
     sprintf(temp_buffer, "-> Read Motor ID: %d's angle", i+1);
     Serial.println(temp_buffer);
     MotorArr[i].Read_Angle_MultiRound();                      // send command to motor, read current angle
-    MotorArr[i].Print_Angle();                                // print out motor's returned current angle data
+    MotorArr[i].Print_Angle_Custom();                         // print out motor's returned current angle data, negative values of angles are processed through calculations.
     delay(2000);
   }
   delay(5000);
