@@ -44,6 +44,28 @@ the "RS485_2" ports are using "Serial3" for communication,**
 ## Hardware Setup
 ### Motor setup
 
+1. Prepare LK motor, power cable, RS485 cable, and power supply / 24V or 48V battery.
+2. Connect the wires as shown in the image below.
+
+<p align="center">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/single_motor.png" width="400" height="300">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/double_motor.png" width="400" height="300">
+</p>
+
+3. Prepare one of the following two set items:  
+  A. U2D2 module with a modified signal line that can be directly connected to RS485 + USB Type-A to Micro-B cable.  
+  B. USB to UART module that provide by LK-tech + USB Type-A to Type-C cable.
+
+<p align="center">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/U2D2_module.png" width="400" height="300">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/U2D2_module_modified.png" width="400" height="300">
+ 
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/LK_UART_module.png" width="400" height="300">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/LK_UART_module_close.png" width="400" height="300">
+</p>
+
+4. 
+5. 
 ### PCB setup
 
 ## Examples
