@@ -135,4 +135,5 @@ This example will set motor origin and then read the angle of the motor specifie
 
 ## Other
 ### Setup for Teensy 4.0 on Arduino IDE
+[Download and Install Teensy support into the Arduino IDE](https://www.pjrc.com/teensy/td_download.html)
 
