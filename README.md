@@ -72,8 +72,41 @@ the "RS485_2" ports are using "Serial3" for communication,**
  <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/setting_tool_COM.png" width="400" height="300">
 </p>
 
-7. 
-8. 
+7. Using a default Baudrate of 115200 and ID 1 ,press "CONNECT" button connect to the motor. If the motor is new, you should successfully connect to the motor.
+8. If the motor's communication connection is **successful**, you will see the screen on the **left picture**, and you can proceed to **step 12** to continue the setup.  
+   BUT if the motor's communication connection **fails**, you will see the error screen on the **right picture**. Please continue with **step 9** to attempting the connection.
+
+<p align="center">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/setting_tool_default.png" width="400" height="300">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/setting_tool_error.png" width="400" height="300">
+</p>
+
+9. (The motor's communication connection has **failed**, indicating that the motor's settings has been modified)  
+   If you are using **set A** (U2D2 module with a modified signal line that can be directly connected to RS485 + USB Type-A to Micro-B cable), proceed to **step 10** to continue attempting the connection.  
+   If you are using **set B** (USB to UART module that provide by LK-tech + USB Type-A to Type-C cable), proceed to **step 11** to continue attempting the connection. 
+10. (**Using set A**)  
+    If you know the baud rate and ID that this motor is using, try changing the baud rate and ID at the top of the setting tool screen and connect again.  
+    If the connection still fails, switch to **set B** and use the default baud rate of 115200 and ID 1 to connect to the motor.  
+    If it still doesn't work, proceed to **step 11** to attempt the connection.
+11. (**Using set B**)
+    The UART baud rate can't be changed, so still use the default baud rate of 115200 and try different IDs (1~20) to connect to the motor.
+    If it still doesn't work, it means the motor is broken or something you are doing is wrong. Please reach out to the seniors in the ASR Lab for help.
+12. (The motor's communication connection is **successful**, proceed to continue the setup)  
+    Change the settings as shown in the image below.  
+    i. Change the "Driver ID" to the motor number you want to set.  
+    ii. Change the "RS485 Baudrate" to the baud rate you want to set. It is recommended to use 4000000 (4M) as it is the fastest.  
+    iii. Change the "Max Torque Current" to 2000.
+    
+<p align="center">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/setting_tool_done.png" width="400" height="300">
+</p>
+
+13. Press "Save Setting" button on the botton right. 
+14. Press the "DISCONNECT" button on the top right, also **power off** the motor, wait about one second, and then power the motor back on. This will allow the motor to memorize the settings.
+15. Connect motor again to check the setting is correct and memorize by motor.  
+    (**Using set A :**) Make sure to change the baud rate and ID at the top of the setting tool screen as you already change "RS485 Baudrate" and "Driver ID".  
+    (**Using set B :**) The UART baud rate doesen't changed, so still use the default baud rate of 115200 and change the ID at the top of the setting tool screen as you already change "Driver ID".
+16. Now you successfully setting up the motor, you can come back to change "PID Setting" if you want.
 
 ### PCB setup
 
