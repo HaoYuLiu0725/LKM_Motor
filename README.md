@@ -52,9 +52,9 @@ the "RS485_2" ports are using "Serial3" for communication,**
  <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/double_motor.png" width="400" height="300">
 </p>
 
-3. Prepare one of the following two set items:  
-  A. U2D2 module with a modified signal line that can be directly connected to RS485 + USB Type-A to Micro-B cable.  
-  B. USB to UART module that provide by LK-tech + USB Type-A to Type-C cable.
+3. Prepare one of the following two sets of items.:  
+  A. **U2D2 module with a modified signal line that can be directly connected to RS485** + USB Type-A to Micro-B cable.  
+  B. **USB to UART module that provide by LK-tech** + USB Type-A to Type-C cable.
 
 <p align="center">
  <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/U2D2_module.png" width="400" height="300">
@@ -64,8 +64,17 @@ the "RS485_2" ports are using "Serial3" for communication,**
  <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/LK_UART_module_close.png" width="400" height="300">
 </p>
 
-4. 
-5. 
+4. Use either set A or set B to connect the motor and your PC.
+5. Open the setting tool (LK moto.V2.63.exe) in the "setting_tool" folder, and power up the motor.
+6. Choose a COM port that you connect the motor and your PC.
+
+<p align="center">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/setting_tool_COM.png" width="400" height="300">
+</p>
+
+7. 
+8. 
+
 ### PCB setup
 
 ## Examples
