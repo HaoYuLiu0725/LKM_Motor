@@ -103,12 +103,16 @@ the "RS485_2" ports are using "Serial3" for communication,**
 
 13. Press "Save Setting" button on the botton right. 
 14. Press the "DISCONNECT" button on the top right, also **power off** the motor, wait about one second, and then power the motor back on. This will allow the motor to memorize the settings.
-15. Connect motor again to check the setting is correct and memorize by motor.  
-    (**Using set A :**) Make sure to change the baud rate and ID at the top of the setting tool screen as you already change "RS485 Baudrate" and "Driver ID".  
-    (**Using set B :**) The UART baud rate doesen't changed, so still use the default baud rate of 115200 and change the ID at the top of the setting tool screen as you already change "Driver ID".
-16. Now you successfully setting up the motor, you can come back to change "PID Setting" if you want.
+15. Connect the motor again to check if the settings are correct and memorized by the motor.  
+    (**Using set A:**) Ensure that you change the baud rate and ID at the top of the setting tool screen as you have already changed the "RS485 Baudrate" and "Driver ID."  
+    (**Using set B:**) The UART baud rate remains unchanged, so continue using the default baud rate of 115200 and change the ID at the top of the setting tool screen as you have already changed the "Driver ID."
+16. Now that you have successfully set up the motor, you can return to adjust the "PID Settings" if desired.
 
 ### PCB setup
+
+<p align="center">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/Motor_Communication_Control_PCB.png" width="400" height="300">
+</p>
 
 ## Examples
 All examples utilize Teensy 4.0 and the 'Motor Communication Control' PCB in NTU ASR-LAB, employing the 'RS485_1' ports on the PCB.  
