@@ -72,7 +72,7 @@ the "RS485_2" ports are using "Serial3" for communication,**
  <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/setting_tool_COM.png" width="400" height="300">
 </p>
 
-7. Using a default Baudrate of 115200 and ID 1 ,press "CONNECT" button connect to the motor. If the motor is new, you should successfully connect to the motor.
+7. Using a default Baudrate of 115200 and ID 1, press "CONNECT" button connect to the motor. If the motor is new, you should successfully connect to the motor.
 8. If the motor's communication connection is **successful**, you will see the screen on the **left picture**, and you can proceed to **step 12** to continue the setup.  
    BUT if the motor's communication connection **fails**, you will see the error screen on the **right picture**. Please continue with **step 9** to attempting the connection.
 
