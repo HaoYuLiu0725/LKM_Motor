@@ -111,7 +111,7 @@ the "RS485_2" ports are using "Serial3" for communication,**
 ### PCB setup
 
 <p align="center">
- <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/Motor_Communication_Control_PCB.png" width="400" height="300">
+ <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/Motor_Communication_Control_PCB.jpg" width="400" height="300">
 </p>
 
 ## Examples
