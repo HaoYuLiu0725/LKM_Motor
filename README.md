@@ -109,7 +109,9 @@ the "RS485_2" ports are using "Serial3" for communication,**
 16. Now that you have successfully set up the motor, you can return to adjust the "PID Settings" if desired.
 
 ### PCB setup
-
+**The "RS485_1" ports are using "Serial5" for communication  
+The "RS485_2" ports are using "Serial3" for communication**  
+Refer to the datasheet ([Motor_Communication_Control.pdf](datasheet/Motor_Communication_Control.pdf)) for more information.
 <p align="center">
  <img src="https://github.com/HaoYuLiu0725/LKM_Motor/blob/main/image/Motor_Communication_Control_PCB.jpg" width="400" height="300">
 </p>
