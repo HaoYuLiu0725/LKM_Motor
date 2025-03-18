@@ -4,6 +4,13 @@
 #include "Arduino.h"
 #define LKM_Motor_BAUDRATE 4000000 //Use motor's MAX baudrate as default
 
+/* Communication Protocol Manual Version: V2.35 */
+/* Note:
+    If using "Motor Communication Control" PCB board in NTU ASR-LAB,
+    the RS485_1 is using Serial5 for communication, and use GPIO-2 to switch between TX and RX.
+    the RS485_2 is using Serial3 for communication, and use GPIO-13 to switch between TX and RX.
+*/
+
 class LKM_Motor
 {
 public:
