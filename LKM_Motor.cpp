@@ -269,7 +269,7 @@ void LKM_Motor::Write_Angle_MultiRound(double angle, double max_speed){
 //(14)單圈位置閉環控制命令1(0xA5), direction: True -> 順時針 ; False -> 逆時針
 void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle){
   uint8_t spinDirection = direction ? 0x00 : 0x01; //True -> 0x00順時針 ; False -> 0x01逆時針
-  uint16_t angleControl = (uint16_t)(angle * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
+  uint32_t angleControl = (uint32_t)(angle * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
 
   // 發送封包
   byte checkSum;
@@ -283,9 +283,9 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle){
   }
   _buffer[4] = checkSum;  //幀頭校驗字節
   _buffer[5] = spinDirection;             //轉動方向
-  _buffer[6] = (angleControl>>0) & 0xFF;  //位置控制低字節
-  _buffer[7] = (angleControl>>8) & 0xFF;  //位置控制高字節
-  _buffer[8] = 0x00;                      //NULL;
+  _buffer[6] = (angleControl>>0) & 0xFF;  //位置控制字節1
+  _buffer[7] = (angleControl>>8) & 0xFF;  //位置控制字節2
+  _buffer[8] = (angleControl>>16) & 0xFF; //位置控制字節3
   checkSum = 0;
   for (int i = 5; i <= 8; i++){
     checkSum += _buffer[i];
@@ -301,7 +301,7 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle){
 //(15)單圈位置閉環控制命令2(0xA6), direction: True -> 順時針 ; False -> 逆時針
 void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle, double max_speed){
   uint8_t spinDirection = direction ? 0x00 : 0x01; //True -> 0x00順時針 ; False -> 0x01逆時針
-  uint16_t angleControl = (uint16_t)(angle * 100 ); //單位換算與乘上齒輪比 * _reduction_ratio
+  uint32_t angleControl = (uint32_t)(angle * 100 * _reduction_ratio); //單位換算與乘上齒輪比
   uint32_t maxSpeed = (uint32_t)(max_speed * 100 * _reduction_ratio); //單位換算與乘上齒輪比
 
   // 發送封包
@@ -316,9 +316,9 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle, double max
   }
   _buffer[4] = checkSum;  //幀頭校驗字節
   _buffer[5] = spinDirection;             //轉動方向
-  _buffer[6] = (angleControl>>0) & 0xFF;  //位置控制低字節
-  _buffer[7] = (angleControl>>8) & 0xFF;  //位置控制高字節
-  _buffer[8] = 0x00;                      //NULL
+  _buffer[6] = (angleControl>>0) & 0xFF;  //位置控制字節1
+  _buffer[7] = (angleControl>>8) & 0xFF;  //位置控制字節2
+  _buffer[8] = (angleControl>>16) & 0xFF; //位置控制字節3
   _buffer[9] = (maxSpeed>>0) & 0xFF;      //9~12 速度
   _buffer[10] = (maxSpeed>>8) & 0xFF;
   _buffer[11] = (maxSpeed>>16) & 0xFF;
@@ -337,15 +337,13 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle, double max
 
 //轉向自動-單圈位置閉環控制命令1(往角度小的方向走)
 void LKM_Motor::Write_Angle_SingleRound(double angle){
-  bool direction = true;
-  direction = Find_Turn_Direction(angle);
+  bool direction = Find_Turn_Direction(angle);
   Write_Angle_SingleRound(direction, angle);
 }
 
 //轉向自動-單圈位置閉環控制命令2(往角度小的方向走)
 void LKM_Motor::Write_Angle_SingleRound(double angle, double max_speed){
-  bool direction = true;
-  direction = Find_Turn_Direction(angle);
+  bool direction = Find_Turn_Direction(angle);
   Write_Angle_SingleRound(direction, angle, max_speed);
 }
 
