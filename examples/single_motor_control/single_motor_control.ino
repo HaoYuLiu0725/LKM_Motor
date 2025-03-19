@@ -4,7 +4,7 @@ This is the example of single motor control
 Using Teensy4.0 and "Motor Communication Control" PCB in NTU ASR-LAB, and use "RS485_1" port on the PCB
 ("RS485_1" is using Serial5 for communication)
 
-This example will control the motor turning from 0 to 60 degree, and then from 60 degree turn back to 0 degree.
+This example will control the motor turning from 0 to 60 degree, 60 to 0 degree, 0 to -60 degree, and then from -60 degree turn back to 0 degree.
 */
 
 // create a LKM_Motor object
