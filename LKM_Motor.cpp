@@ -13,6 +13,8 @@ LKM_Motor::LKM_Motor(){
   _reduction_ratio = 0;
   _serial_port = 0;
   _Kt = 0.0;
+  _baudrate = LKM_Motor_BAUDRATE;
+  _need_receive = false;
 }
 
 LKM_Motor::LKM_Motor(int id, int reduction_ratio, int serial_port){
@@ -20,6 +22,8 @@ LKM_Motor::LKM_Motor(int id, int reduction_ratio, int serial_port){
   _reduction_ratio = reduction_ratio;
   _serial_port = serial_port;
   _Kt = 0.0;
+  _baudrate = LKM_Motor_BAUDRATE;
+  _need_receive = false;
 }
 
 LKM_Motor::LKM_Motor(int id, int reduction_ratio, int serial_port, double Kt){
@@ -27,6 +31,8 @@ LKM_Motor::LKM_Motor(int id, int reduction_ratio, int serial_port, double Kt){
   _reduction_ratio = reduction_ratio;
   _serial_port = serial_port;
   _Kt = Kt;
+  _baudrate = LKM_Motor_BAUDRATE;
+  _need_receive = false;
 }
 
 void LKM_Motor::Serial_Init(){

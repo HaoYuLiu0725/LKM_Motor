@@ -85,10 +85,10 @@ private:
   int _serial_port = 0;               //馬達使用的serial port
   double _Kt = 0.0;                   //馬達的轉矩常數Kt
   int _baudrate = LKM_Motor_BAUDRATE; //馬達設定的baudrate
+  bool _need_receive = false;         //設定非讀取資訊的指令是否需要解封包
   byte _buffer[20];                   //要傳送之封包
   int _count_RX = 0;                  //計算儲存讀入封包之長度
   byte _readin[50];                   //完整儲存讀入之封包
-  bool _need_receive = false;         //設定非讀取資訊的指令是否需要解封包
 };
 
 #endif
