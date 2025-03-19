@@ -27,8 +27,8 @@ public:
   void Write_Speed(double speed);                                               //(11)速度閉環控制命令(0xA2)
   void Write_Angle_MultiRound(double angle);                                    //(12)多圈位置閉環控制命令1(0xA3)
   void Write_Angle_MultiRound(double angle, double max_speed);                  //(13)多圈位置閉環控制命令2(0xA4)
-  void Write_Angle_SingleRound(bool direction, double angle);                   //(14)單圈位置閉環控制命令1(0xA5), direction: True -> 順時針 ; False -> 逆時針
-  void Write_Angle_SingleRound(bool direction, double angle, double max_speed); //(15)單圈位置閉環控制命令2(0xA6), direction: True -> 順時針 ; False -> 逆時針
+  void Write_Angle_SingleRound(double angle, bool direction);                   //(14)單圈位置閉環控制命令1(0xA5), direction: True -> 順時針 ; False -> 逆時針
+  void Write_Angle_SingleRound(double angle, double max_speed, bool direction); //(15)單圈位置閉環控制命令2(0xA6), direction: True -> 順時針 ; False -> 逆時針
   void Write_Angle_SingleRound(double angle);                                   //轉向自動-單圈位置閉環控制命令1(往角度小的方向走)
   void Write_Angle_SingleRound(double angle, double max_speed);                 //轉向自動-單圈位置閉環控制命令2(往角度小的方向走)
   void Write_Angle_Increment(double angle_increment);                           //(16)增量位置閉環控制命令1(0xA7)
@@ -46,10 +46,7 @@ public:
   void Print_Setup_Data();        //列印出馬達設定的 id, reduction_ratio, serial_port
   void Print_Data();              //列印出馬達回傳的資料: 電機溫度、轉矩電流、電機速度以及編碼器位置
   void Print_Angle();             //列印出馬達回傳的角度
-  void Print_Angle_Custom();      //列印出馬達回傳的角度, 角度的負值經過計算處理
   void Print_PID_Param();         //列印出馬達的PID參數
-  void Calculate_Custom_Angle();  //角度的負值經過計算處理
-  bool Find_Turn_Direction(double target_angle);
   void Set_Need_Receive(bool need_receive); //設定非讀取資訊的指令是否需要解封包
   void Set_Kt(double Kt);         //設定馬達的轉矩常數Kt
 
@@ -61,8 +58,9 @@ public:
   double motor_iq = 0;              //馬達轉矩電流
   int16_t motor_speed = 0;          //馬達轉速
   uint16_t motor_encoder = 0;       //馬達編碼器位置
-  double motor_angle = 0.0;         //馬達角度
-  double motor_angle_custom = 0.0;  //馬達角度, 角度的負值經過計算處理
+  double motor_angle_encoder = 0.0; //編碼器角度 (-180 ~ 180)
+  double motor_angle_single = 0.0;  //單圈馬達角度 (-180 ~ 180)
+  double motor_angle_multi = 0.0;   //多圈馬達角度
 
   uint16_t anglePidKp = 0;    //角度環Kp
   uint16_t anglePidKi = 0;    //角度環Ki
@@ -75,8 +73,10 @@ public:
   uint16_t currentPidKd = 0;  //電流環Kd
   
 private:
-  void _Receive_Pack();                                 //接受回傳指令
-  void _Unpack(byte data_receive[30], int lenth);       //解讀封包內容
+  void _Receive_Pack();                            //接受回傳指令
+  void _Unpack(byte data_receive[30], int length); //解讀封包內容
+  bool _Find_Turn_Direction(double target_angle);  // direction: True -> 順時針 ; False -> 逆時針
+  double _Normalize_Angle_Deg(double angle);       // 將任意角度轉化成 -180 ~ 180
   // void _Unpack_Read_Setup_Param(byte data_receive[30]); //解讀回傳的設定參數
   // void _Unpack_Write_Setup_Param(byte data_receive[30]);//解讀設定參數是否成功
   Stream* MOTOR_SERIAL = &Serial1;

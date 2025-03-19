@@ -273,7 +273,8 @@ void LKM_Motor::Write_Angle_MultiRound(double angle, double max_speed){
 }
 
 //(14)單圈位置閉環控制命令1(0xA5), direction: True -> 順時針 ; False -> 逆時針
-void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle){
+void LKM_Motor::Write_Angle_SingleRound(double angle, bool direction){
+  angle = _Normalize_Angle_Deg(angle); // 將任意角度轉化成 -180 ~ 180
   uint8_t spinDirection = direction ? 0x00 : 0x01; //True -> 0x00順時針 ; False -> 0x01逆時針
   uint32_t angleControl = (uint32_t)(angle * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
 
@@ -305,7 +306,8 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle){
 }
 
 //(15)單圈位置閉環控制命令2(0xA6), direction: True -> 順時針 ; False -> 逆時針
-void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle, double max_speed){
+void LKM_Motor::Write_Angle_SingleRound(double angle, double max_speed, bool direction){
+  angle = _Normalize_Angle_Deg(angle); // 將任意角度轉化成 -180 ~ 180
   uint8_t spinDirection = direction ? 0x00 : 0x01; //True -> 0x00順時針 ; False -> 0x01逆時針
   uint32_t angleControl = (uint32_t)(angle * 100 * _reduction_ratio); //單位換算與乘上齒輪比
   uint32_t maxSpeed = (uint32_t)(max_speed * 100 * _reduction_ratio); //單位換算與乘上齒輪比
@@ -343,14 +345,16 @@ void LKM_Motor::Write_Angle_SingleRound(bool direction, double angle, double max
 
 //轉向自動-單圈位置閉環控制命令1(往角度小的方向走)
 void LKM_Motor::Write_Angle_SingleRound(double angle){
-  bool direction = Find_Turn_Direction(angle);
-  Write_Angle_SingleRound(direction, angle);
+  angle = _Normalize_Angle_Deg(angle); // 將任意角度轉化成 -180 ~ 180
+  bool direction = _Find_Turn_Direction(angle);
+  Write_Angle_SingleRound(angle, direction);
 }
 
 //轉向自動-單圈位置閉環控制命令2(往角度小的方向走)
 void LKM_Motor::Write_Angle_SingleRound(double angle, double max_speed){
-  bool direction = Find_Turn_Direction(angle);
-  Write_Angle_SingleRound(direction, angle, max_speed);
+  angle = _Normalize_Angle_Deg(angle); // 將任意角度轉化成 -180 ~ 180
+  bool direction = _Find_Turn_Direction(angle);
+  Write_Angle_SingleRound(angle, max_speed, direction);
 }
 
 //(16)增量位置閉環控制命令1(0xA7)
@@ -627,7 +631,7 @@ void LKM_Motor::_Receive_Pack(){
 }
 
 // 解讀封包內容
-void LKM_Motor::_Unpack(byte data_receive[30], int lenth){
+void LKM_Motor::_Unpack(byte data_receive[30], int length){
   // (10)轉矩閉環控制命令: 回傳電機溫度、電機轉矩電流值、電機轉速以及編碼器位置 (0xA1)
   // (11)速度閉環控制命令: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA2)
   // (12)多圈位置閉環控制命令1: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA3)
@@ -643,20 +647,23 @@ void LKM_Motor::_Unpack(byte data_receive[30], int lenth){
     motor_iq = (double)iq_current * 33.0 / 2048.0;
     motor_speed = (int16_t)((data_receive[9]<<8) + (data_receive[8]));
     motor_encoder = (uint16_t)((data_receive[11]<<8) + (data_receive[10]));
+    motor_angle_encoder = motor_encoder / pow(2, 16) * 360.0; // use 16 bit encoder
+    if(motor_angle_encoder > 180.0) motor_angle_encoder -= 360.0;
   }
   // (20)讀取多圈角度命令(0x92)
   else if (data_receive[1] == 0x92){
     motor_id = (int)data_receive[2]; //馬達ID
     int64_t motorAngle = (int64_t)(((int64_t)data_receive[12]<<56) + ((int64_t)data_receive[11]<<48) + ((int64_t)data_receive[10]<<40) + 
     ((int64_t)data_receive[9]<<32) + (data_receive[8]<<24) + (data_receive[7]<<16) + (data_receive[6]<<8) + data_receive[5]);
-    motor_angle = (double)motorAngle / (100.0 * (double)_reduction_ratio);
-    Calculate_Custom_Angle();
+    motor_angle_multi = (double)motorAngle / (100.0 * (double)_reduction_ratio);
+    if(motor_angle_multi < 0) motor_angle_multi += (pow(2, 32) / _reduction_ratio / 100);
   }
   // (22)讀取單圈角度命令(0x94)
   else if (data_receive[1] == 0x94){
     motor_id = (int)data_receive[2]; //馬達ID
     uint32_t circleAngle = (uint32_t)((data_receive[8]<<24) + (data_receive[7]<<16) + (data_receive[6]<<8) + data_receive[5]);
-    motor_angle = (double)circleAngle / (100.0 * (double)_reduction_ratio);
+    motor_angle_single = (double)circleAngle / (100.0 * (double)_reduction_ratio);
+    if(motor_angle_single > 180.0) motor_angle_single -= 360.0;
   }
   // // (24)讀取設定參數命令(0x40)
   // else if (data_receive[1] == 0x40){
@@ -723,18 +730,14 @@ void LKM_Motor::Print_Data(){
   Serial.print("Current:          "); Serial.println(motor_iq);
   Serial.print("Velocity:         "); Serial.println(motor_speed); 
   Serial.print("Encoder position: "); Serial.println(motor_encoder);
+  Serial.print("Encoder Angle:    "); Serial.println(motor_angle_encoder);
 }
 
 //列印出馬達回傳的角度
 void LKM_Motor::Print_Angle(){
-  Serial.print("Motor ID: "); Serial.println(motor_id);
-  Serial.print("Angle:    "); Serial.println(motor_angle);
-}
-
-//列印出馬達回傳的角度, 角度的負值經過計算處理
-void LKM_Motor::Print_Angle_Custom(){
-  Serial.print("Motor ID:     "); Serial.println(motor_id);
-  Serial.print("Custom Angle: "); Serial.println(motor_angle_custom);
+  Serial.print("Motor ID:           "); Serial.println(motor_id);
+  Serial.print("Motor Angle Single: "); Serial.println(motor_angle_single);
+  Serial.print("Motor Angle Multi:  "); Serial.println(motor_angle_multi);
 }
 
 //列印出馬達的PID參數
@@ -751,21 +754,6 @@ void LKM_Motor::Print_PID_Param(){
   Serial.println(current_pid_buffer);
 }         
 
-//角度的負值經過計算處理
-void LKM_Motor::Calculate_Custom_Angle(){
-  if(motor_angle < 0) motor_angle_custom = motor_angle + (pow(2, 32) / _reduction_ratio / 100);
-  else motor_angle_custom = motor_angle;
-}
-
-// direction: True -> 順時針 ; False -> 逆時針
-bool LKM_Motor::Find_Turn_Direction(double target_angle){
-  Read_Angle_SingleRound();
-  double diff = target_angle - (double)motor_angle;
-  if(diff < 0) diff += 360.0;
-  if(diff > 180) return false; // counterclockwise 逆時針
-  else           return true;  // clockwise 順時針
-}
-
 //設定非讀取資訊的指令是否需要解封包
 void LKM_Motor::Set_Need_Receive(bool need_receive){
   _need_receive = need_receive;
@@ -773,4 +761,20 @@ void LKM_Motor::Set_Need_Receive(bool need_receive){
 
 void LKM_Motor::Set_Kt(double Kt){
   _Kt = Kt;
+}
+
+// direction: True -> 順時針 ; False -> 逆時針
+bool LKM_Motor::_Find_Turn_Direction(double target_angle){
+  Read_Angle_SingleRound();
+  double diff = target_angle - (double)motor_angle_single;
+  if(diff < 0) diff += 360.0;
+  if(diff > 180) return false; // counterclockwise 逆時針
+  else           return true;  // clockwise 順時針
+}
+
+// 將任意角度轉化成 -180 ~ 180
+double LKM_Motor::_Normalize_Angle_Deg(double angle) {
+  angle = fmod(angle + 180.0, 360.0);
+  if (angle < 0) angle += 360.0;
+  return angle - 180.0;
 }
