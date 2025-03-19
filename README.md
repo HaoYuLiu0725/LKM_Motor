@@ -122,7 +122,7 @@ All examples utilize Teensy 4.0 and the 'Motor Communication Control' PCB in NTU
 ### Single motor control
 [single_motor_control.ino](examples/single_motor_control/single_motor_control.ino)  
 The example of single motor control  
-This example will control the motor turning from 0 to 60 degree, and then from 60 degree turn back to 0 degree.  
+This example will control the motor turning from 0 to 60 degree, 60 to 0 degree, 0 to -60 degree, and then from -60 degree turn back to 0 degree.  
 
 ### Multi motor control
 [multi_motor_control.ino](examples/multi_motor_control/multi_motor_control.ino)  
@@ -176,10 +176,10 @@ This example will set motor origin and then read the angle of the motor specifie
 `void Write_Angle_MultiRound(double angle, double max_speed)`
 
 (14)單圈位置閉環控制命令1(0xA5), direction: True -> 順時針 ; False -> 逆時針  
-`void Write_Angle_SingleRound(bool direction, double angle)`
+`void Write_Angle_SingleRound(double angle, bool direction);`
 
 (15)單圈位置閉環控制命令2(0xA6), direction: True -> 順時針 ; False -> 逆時針  
-`void Write_Angle_SingleRound(bool direction, double angle, double max_speed)`
+`void Write_Angle_SingleRound(double angle, double max_speed, bool direction)`
 
 轉向自動-單圈位置閉環控制命令1(往角度小的方向走)  
 `void Write_Angle_SingleRound(double angle)`
@@ -211,17 +211,8 @@ This example will set motor origin and then read the angle of the motor specifie
 列印出馬達回傳的角度  
 `void Print_Angle()`
 
-列印出馬達回傳的角度, 角度的負值經過計算處理  
-`void Print_Angle_Custom()`
-
 列印出馬達的PID參數  
 `void Print_PID_Param()`
-
-角度的負值經過計算處理  
-`void Calculate_Custom_Angle()`
-
-計算旋轉方向, 用於單圈位置閉環控制命令  
-`bool Find_Turn_Direction(double target_angle)`
 
 設定非讀取資訊的指令是否需要解封包  
 `void Set_Need_Receive(bool need_receive)`
