@@ -23,31 +23,32 @@ void setup() {
     "RS485_1" is using Serial5 for communication */
     MotorArr[i].Print_Setup_Data();     // print out motor's setup data (id, reduction_ratio, serial_port)
     MotorArr[i].Serial_Init();          // initialize the motor's serial port
+    MotorArr[i].Set_Need_Receive(true); // Modify the settings to require parsing the motor's returned data packet when executing non-reading information commands 
   }
 }
 
 void loop() {
   for(int i = 0; i < motor_num; i++){
-    sprintf(temp_buffer, "-> Motor ID: %d go to 60 !", i+1);
-    Serial.println(temp_buffer);
-    MotorArr[i].Write_Angle_MultiRound(60, 300);              // send command to motor, go to 60 degree, speed = 300
-    MotorArr[i].Print_Data();                                 // print out motor's returned data (Temperature, Current, Velocity, Encoder position)
-    delay(2000);
-    sprintf(temp_buffer, "-> Read Motor ID: %d's angle", i+1);
-    Serial.println(temp_buffer);
-    MotorArr[i].Read_Angle_MultiRound();                      // send command to motor, read current angle
-    MotorArr[i].Print_Angle_Custom();                         // print out motor's returned current angle data, negative values of angles are processed through calculations.
-    delay(2000);
-
     sprintf(temp_buffer, "-> Motor ID: %d go to 0 !", i+1);
     Serial.println(temp_buffer);
-    MotorArr[i].Write_Angle_MultiRound(0, 300);               // send command to motor, go to 0 degree, speed = 300
-    MotorArr[i].Print_Data();                                 // print out motor's returned data (Temperature, Current, Velocity, Encoder position)
+    MotorArr[i].Write_Angle_SingleRound(0.0, 300.0);            // send single-round command to motor, go to 0 degree, speed = 300
+    MotorArr[i].Print_Data();                                   // print out motor's returned data (Temperature, Current, Velocity, Encoder position) and Encoder Angle
     delay(2000);
     sprintf(temp_buffer, "-> Read Motor ID: %d's angle", i+1);
     Serial.println(temp_buffer);
-    MotorArr[i].Read_Angle_MultiRound();                      // send command to motor, read current angle
-    MotorArr[i].Print_Angle_Custom();                         // print out motor's returned current angle data, negative values of angles are processed through calculations.
+    MotorArr[i].Read_Angle_SingleRound();                       // send command to motor, read current angle in single-round
+    MotorArr[i].Print_Angle();                                  // print out motor's returned current angle data
+    delay(2000);
+
+    sprintf(temp_buffer, "-> Motor ID: %d go to 60 !", i+1);
+    Serial.println(temp_buffer);
+    MotorArr[i].Write_Angle_SingleRound(60.0, 500.0);           // send single-round command to motor, go to 60 degree, speed = 500
+    MotorArr[i].Print_Data();                                   // print out motor's returned data (Temperature, Current, Velocity, Encoder position) and Encoder Angle
+    delay(2000);
+    sprintf(temp_buffer, "-> Read Motor ID: %d's angle", i+1);
+    Serial.println(temp_buffer);
+    MotorArr[i].Read_Angle_SingleRound();                       // send command to motor, read current angle in single-round
+    MotorArr[i].Print_Angle();                                  // print out motor's returned current angle data
     delay(2000);
   }
   delay(5000);

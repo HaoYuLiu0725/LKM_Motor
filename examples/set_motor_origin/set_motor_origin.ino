@@ -39,7 +39,8 @@ void loop() {
     Serial.println(motorID);
     Serial.clear();
   }
-  MotorArr[motorID].Read_Angle_MultiRound();  // send command to motor, read current angle
-  MotorArr[motorID].Print_Angle_Custom();     // print out motor's returned current angle data, negative values of angles are processed through calculations.
+  MotorArr[motorID].Read_Angle_SingleRound(); // send command to motor, read current angle in single-round
+  MotorArr[motorID].Read_Angle_MultiRound();  // send command to motor, read current angle in multi-round
+  MotorArr[motorID].Print_Angle();            // print out motor's returned current angle data
   delay(100);
 }
