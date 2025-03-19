@@ -730,14 +730,14 @@ void LKM_Motor::Print_Data(){
   Serial.print("Current:          "); Serial.println(motor_iq);
   Serial.print("Velocity:         "); Serial.println(motor_speed); 
   Serial.print("Encoder position: "); Serial.println(motor_encoder);
-  Serial.print("Encoder Angle:    "); Serial.println(motor_angle_encoder);
+  Serial.print("Encoder angle:    "); Serial.println(motor_angle_encoder);
 }
 
 //列印出馬達回傳的角度
 void LKM_Motor::Print_Angle(){
   Serial.print("Motor ID:           "); Serial.println(motor_id);
-  Serial.print("Motor Angle Single: "); Serial.println(motor_angle_single);
-  Serial.print("Motor Angle Multi:  "); Serial.println(motor_angle_multi);
+  Serial.print("Motor angle single: "); Serial.println(motor_angle_single);
+  Serial.print("Motor angle multi:  "); Serial.println(motor_angle_multi);
 }
 
 //列印出馬達的PID參數
