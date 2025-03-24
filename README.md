@@ -151,6 +151,9 @@ This example will set motor origin and then read the angle of the motor specifie
 **更改馬達baudrate:**  
 `void Change_Baudrate(int baudrate)`
 
+(3)讀取電機狀態2命令(0x9C)
+`void Read_Motor_State_2();`
+
 (5)電機關機命令(0x80)  
 `void Write_Motor_Shutdown()`
 
