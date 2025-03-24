@@ -19,6 +19,7 @@ public:
   LKM_Motor(int id, int reduction_ratio, int serial_port, double Kt);
   void Serial_Init();
   void Change_Baudrate(int baudrate);                                           //更改馬達baudrate
+  void Read_Motor_State_2();                                                    //(3)讀取電機狀態2命令(0x9C)
   void Write_Motor_Shutdown();                                                  //(5)電機關機命令(0x80)
   void Write_Motor_Run();                                                       //(6)電機運行命令(0x88)
   void Write_Motor_Pause();                                                     //(7)電機停止命令(0x81)

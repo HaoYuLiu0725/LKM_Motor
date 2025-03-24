@@ -82,6 +82,24 @@ void LKM_Motor::Change_Baudrate(int baudrate){
   Serial_Init();
 }
 
+//(3)讀取電機狀態2命令(0x9C)
+void LKM_Motor::Read_Motor_State_2(){
+  // 發送封包
+  byte checkSum;
+  _buffer[0] = 0x3E;  //頭字節
+  _buffer[1] = 0x9C;  //命令字節
+  _buffer[2] = _id;   //ID
+  _buffer[3] = 0x00;  //數據長度字節
+  checkSum = 0;
+  for (int i = 0; i <= 3; i++){
+    checkSum += _buffer[i];
+  }
+  _buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  delayMicroseconds(delay_time);
+  _Receive_Pack();                  //接收電機回覆
+}
+
 //(5)電機關機命令(0x80)
 void LKM_Motor::Write_Motor_Shutdown(){
   // 發送封包
@@ -632,6 +650,7 @@ void LKM_Motor::_Receive_Pack(){
 
 // 解讀封包內容
 void LKM_Motor::_Unpack(byte data_receive[30], int length){
+  // (3)讀取電機狀態2命令: 回傳電機溫度、電機轉矩電流值、電機轉速以及編碼器位置 (0x9C)
   // (10)轉矩閉環控制命令: 回傳電機溫度、電機轉矩電流值、電機轉速以及編碼器位置 (0xA1)
   // (11)速度閉環控制命令: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA2)
   // (12)多圈位置閉環控制命令1: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA3)
@@ -640,7 +659,7 @@ void LKM_Motor::_Unpack(byte data_receive[30], int length){
   // (15)單圈位置閉環控制命令2: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA6)
   // (16)增量位置閉環控制命令1: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA7)
   // (17)增量位置閉環控制命令2: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA8)
-  if (data_receive[1] == 0xA1 || data_receive[1] == 0xA2 || data_receive[1] == 0xA3 || data_receive[1] == 0xA4 || data_receive[1] == 0xA5 || data_receive[1] == 0xA6 || data_receive[1] == 0xA7 || data_receive[1] == 0xA8){
+  if (data_receive[1] == 0x9C || data_receive[1] == 0xA1 || data_receive[1] == 0xA2 || data_receive[1] == 0xA3 || data_receive[1] == 0xA4 || data_receive[1] == 0xA5 || data_receive[1] == 0xA6 || data_receive[1] == 0xA7 || data_receive[1] == 0xA8){
     motor_id = (int)data_receive[2]; //馬達ID
     motor_temperature = (int8_t)(data_receive[5]);
     int16_t iq_current = (int16_t)((data_receive[7]<<8) + (data_receive[6]));
