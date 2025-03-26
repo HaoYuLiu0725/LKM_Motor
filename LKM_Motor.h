@@ -52,6 +52,7 @@ public:
   void Set_Kt(double Kt);         //設定馬達的轉矩常數Kt
 
   int delay_time = 250; //[us]
+  bool debug_mode = true; //decide whether to use Serial print debug message in _Receive_Pack() function
   
   /*儲存馬達回傳的資料*/
   int motor_id = 0;                 //馬達ID

@@ -617,14 +617,18 @@ void LKM_Motor::_Receive_Pack(int pack_length){
   if(MOTOR_SERIAL->available() > 0){
     MOTOR_SERIAL->readBytes(data, pack_length); //讀取輸入之byte
     if(data[0] != 0x3E){ // 確認是否為頭字節
-      sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Header Error! =====", _id);
-      Serial.println(_debug_buffer);
+      if(debug_mode){
+        sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Header Error! =====", _id);
+        Serial.println(_debug_buffer);
+      }
       return;
     }
 
     if(data[3] != data_length){ // 確認資料長度
-      sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Data Length Error! =====", _id);
-      Serial.println(_debug_buffer);
+      if(debug_mode){
+        sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Data Length Error! =====", _id);
+        Serial.println(_debug_buffer);
+      }
       return;
     }
 
@@ -633,8 +637,10 @@ void LKM_Motor::_Receive_Pack(int pack_length){
       checkSum += data[i];
     }
     if(checkSum != data[4]){
-      sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Header Checksum Error! =====", _id);
-      Serial.println(_debug_buffer);
+      if(debug_mode){
+        sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Header Checksum Error! =====", _id);
+        Serial.println(_debug_buffer);
+      }
       return;
     }
 
@@ -643,8 +649,10 @@ void LKM_Motor::_Receive_Pack(int pack_length){
       checkSum += data[i];
     }
     if(checkSum != data[pack_length-1]){
-      sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Data Checksum Error! =====", _id);
-      Serial.println(_debug_buffer);
+      if(debug_mode){
+        sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Data Checksum Error! =====", _id);
+        Serial.println(_debug_buffer);
+      }
       return;
     }
     _Unpack(data); //傳送去解讀封包
