@@ -85,67 +85,71 @@ void LKM_Motor::Change_Baudrate(int baudrate){
 //(3)讀取電機狀態2命令(0x9C)
 void LKM_Motor::Read_Motor_State_2(){
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0x9C;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x00;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0x9C;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x00;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;            //幀頭校驗字節
-  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(buffer, 5);  //送出封包
   delayMicroseconds(delay_time);
-  _Receive_Pack();                  //接收電機回覆
+  _Receive_Pack(13);               //接收電機回覆
 }
 
 //(5)電機關機命令(0x80)
 void LKM_Motor::Write_Motor_Shutdown(){
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0x80;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x00;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0x80;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x00;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;            //幀頭校驗字節
-  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(buffer, 5);  //送出封包
 }
 
 //(6)電機運行命令(0x88)
 void LKM_Motor::Write_Motor_Run(){
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0x88;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x00;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0x88;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x00;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;            //幀頭校驗字節
-  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(buffer, 5);  //送出封包
 }
 
 //(7)電機停止命令(0x81)
 void LKM_Motor::Write_Motor_Pause(){
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0x81;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x00;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0x81;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x00;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;            //幀頭校驗字節
-  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(buffer, 5);  //送出封包
 }
 
 //(10)轉矩閉環控制命令(0xA1), current: -33~33 A
@@ -154,27 +158,28 @@ void LKM_Motor::Write_Torque_Current(double current){
   int16_t iqControl = (int16_t)(current / 33 * 2048);
 
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0xA1;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x02;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0xA1;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x02;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;  //幀頭校驗字節
-  _buffer[5] = (iqControl>>0) & 0xFF; //轉矩電流控制值低字節
-  _buffer[6] = (iqControl>>8) & 0xFF; //轉矩電流控制值高字節
+  buffer[4] = checkSum;  //幀頭校驗字節
+  buffer[5] = (iqControl>>0) & 0xFF; //轉矩電流控制值低字節
+  buffer[6] = (iqControl>>8) & 0xFF; //轉矩電流控制值高字節
   checkSum = 0;
   for (int i = 5; i <= 6; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[7] = checkSum;            //數據校驗字節
-  MOTOR_SERIAL->write(_buffer, 8);  //送出封包
+  buffer[7] = checkSum;            //數據校驗字節
+  MOTOR_SERIAL->write(buffer, 8);  //送出封包
   if(_need_receive){
     delayMicroseconds(delay_time);
-    _Receive_Pack();                //接收電機回覆
+    _Receive_Pack(13);             //接收電機回覆
   }
 }
 
@@ -189,29 +194,30 @@ void LKM_Motor::Write_Speed(double speed){
   int32_t speedControl = (int32_t)(speed * 100 * _reduction_ratio);
 
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0xA2;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x04;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0xA2;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x04;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;  //幀頭校驗字節
-  _buffer[5] = (speedControl>>0) & 0xFF;  //電機速度低字節
-  _buffer[6] = (speedControl>>8) & 0xFF;
-  _buffer[7] = (speedControl>>16) & 0xFF;
-  _buffer[8] = (speedControl>>24) & 0xFF; //電機速度高字節
+  buffer[4] = checkSum;  //幀頭校驗字節
+  buffer[5] = (speedControl>>0) & 0xFF;  //電機速度低字節
+  buffer[6] = (speedControl>>8) & 0xFF;
+  buffer[7] = (speedControl>>16) & 0xFF;
+  buffer[8] = (speedControl>>24) & 0xFF; //電機速度高字節
   checkSum = 0;
   for (int i = 5; i <= 8; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[9] = checkSum;            //數據校驗字節
-  MOTOR_SERIAL->write(_buffer, 10); //送出封包
+  buffer[9] = checkSum;            //數據校驗字節
+  MOTOR_SERIAL->write(buffer, 10); //送出封包
   if(_need_receive){
     delayMicroseconds(delay_time);
-    _Receive_Pack();                //接收電機回覆
+    _Receive_Pack(13);             //接收電機回覆
   }
 }
 
@@ -220,33 +226,34 @@ void LKM_Motor::Write_Angle_MultiRound(double angle){
   int64_t angleControl = (int64_t)(angle * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
 
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0xA3;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x08;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0xA3;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x08;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;  //幀頭校驗字節
-  _buffer[5] = (angleControl>>0) & 0xFF;  //5~12 位置
-  _buffer[6] = (angleControl>>8) & 0xFF;
-  _buffer[7] = (angleControl>>16) & 0xFF;
-  _buffer[8] = (angleControl>>24) & 0xFF;
-  _buffer[9] = (angleControl>>32) & 0xFF;
-  _buffer[10] = (angleControl>>40) & 0xFF;
-  _buffer[11] = (angleControl>>48) & 0xFF;
-  _buffer[12] = (angleControl>>56) & 0xFF;
+  buffer[4] = checkSum;  //幀頭校驗字節
+  buffer[5] = (angleControl>>0) & 0xFF;  //5~12 位置
+  buffer[6] = (angleControl>>8) & 0xFF;
+  buffer[7] = (angleControl>>16) & 0xFF;
+  buffer[8] = (angleControl>>24) & 0xFF;
+  buffer[9] = (angleControl>>32) & 0xFF;
+  buffer[10] = (angleControl>>40) & 0xFF;
+  buffer[11] = (angleControl>>48) & 0xFF;
+  buffer[12] = (angleControl>>56) & 0xFF;
   checkSum = 0;
   for (int i = 5; i <= 12; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[13] = checkSum;           //數據校驗字節
-  MOTOR_SERIAL->write(_buffer, 14); //送出封包
+  buffer[13] = checkSum;           //數據校驗字節
+  MOTOR_SERIAL->write(buffer, 14); //送出封包
   if(_need_receive){
     delayMicroseconds(delay_time);
-    _Receive_Pack();                //接收電機回覆
+    _Receive_Pack(13);             //接收電機回覆
   }
 }
 
@@ -256,37 +263,38 @@ void LKM_Motor::Write_Angle_MultiRound(double angle, double max_speed){
   uint32_t maxSpeed = (uint32_t)(max_speed * 100 * _reduction_ratio); //單位換算與乘上齒輪比
 
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0xA4;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x0C;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0xA4;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x0C;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;  //幀頭校驗字節
-  _buffer[5] = (angleControl>>0) & 0xFF;  //5~12 位置
-  _buffer[6] = (angleControl>>8) & 0xFF;
-  _buffer[7] = (angleControl>>16) & 0xFF;
-  _buffer[8] = (angleControl>>24) & 0xFF;
-  _buffer[9] = (angleControl>>32) & 0xFF;
-  _buffer[10] = (angleControl>>40) & 0xFF;
-  _buffer[11] = (angleControl>>48) & 0xFF;
-  _buffer[12] = (angleControl>>56) & 0xFF;
-  _buffer[13] = (maxSpeed>>0) & 0xFF;     //13~16 速度
-  _buffer[14] = (maxSpeed>>8) & 0xFF;
-  _buffer[15] = (maxSpeed>>16) & 0xFF;
-  _buffer[16] = (maxSpeed>>24) & 0xFF;
+  buffer[4] = checkSum;  //幀頭校驗字節
+  buffer[5] = (angleControl>>0) & 0xFF;  //5~12 位置
+  buffer[6] = (angleControl>>8) & 0xFF;
+  buffer[7] = (angleControl>>16) & 0xFF;
+  buffer[8] = (angleControl>>24) & 0xFF;
+  buffer[9] = (angleControl>>32) & 0xFF;
+  buffer[10] = (angleControl>>40) & 0xFF;
+  buffer[11] = (angleControl>>48) & 0xFF;
+  buffer[12] = (angleControl>>56) & 0xFF;
+  buffer[13] = (maxSpeed>>0) & 0xFF;     //13~16 速度
+  buffer[14] = (maxSpeed>>8) & 0xFF;
+  buffer[15] = (maxSpeed>>16) & 0xFF;
+  buffer[16] = (maxSpeed>>24) & 0xFF;
   checkSum = 0;
   for (int i = 5; i <= 16; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[17] = checkSum;           //數據校驗字節
-  MOTOR_SERIAL->write(_buffer, 18); //送出封包
+  buffer[17] = checkSum;           //數據校驗字節
+  MOTOR_SERIAL->write(buffer, 18); //送出封包
   if(_need_receive){
     delayMicroseconds(delay_time);
-    _Receive_Pack();                //接收電機回覆
+    _Receive_Pack(13);             //接收電機回覆
   }
 }
 
@@ -297,29 +305,30 @@ void LKM_Motor::Write_Angle_SingleRound(double angle, bool direction){
   uint32_t angleControl = (uint32_t)(angle * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
 
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0xA5;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x04;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0xA5;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x04;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;  //幀頭校驗字節
-  _buffer[5] = spinDirection;             //轉動方向
-  _buffer[6] = (angleControl>>0) & 0xFF;  //位置控制字節1
-  _buffer[7] = (angleControl>>8) & 0xFF;  //位置控制字節2
-  _buffer[8] = (angleControl>>16) & 0xFF; //位置控制字節3
+  buffer[4] = checkSum;  //幀頭校驗字節
+  buffer[5] = spinDirection;             //轉動方向
+  buffer[6] = (angleControl>>0) & 0xFF;  //位置控制字節1
+  buffer[7] = (angleControl>>8) & 0xFF;  //位置控制字節2
+  buffer[8] = (angleControl>>16) & 0xFF; //位置控制字節3
   checkSum = 0;
   for (int i = 5; i <= 8; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[9] = checkSum;            //數據校驗字節
-  MOTOR_SERIAL->write(_buffer, 10); //送出封包
+  buffer[9] = checkSum;            //數據校驗字節
+  MOTOR_SERIAL->write(buffer, 10); //送出封包
   if(_need_receive){
     delayMicroseconds(delay_time);
-    _Receive_Pack();                //接收電機回覆
+    _Receive_Pack(13);             //接收電機回覆
   }
 }
 
@@ -331,33 +340,34 @@ void LKM_Motor::Write_Angle_SingleRound(double angle, double max_speed, bool dir
   uint32_t maxSpeed = (uint32_t)(max_speed * 100 * _reduction_ratio); //單位換算與乘上齒輪比
 
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0xA6;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x08;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0xA6;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x08;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;  //幀頭校驗字節
-  _buffer[5] = spinDirection;             //轉動方向
-  _buffer[6] = (angleControl>>0) & 0xFF;  //位置控制字節1
-  _buffer[7] = (angleControl>>8) & 0xFF;  //位置控制字節2
-  _buffer[8] = (angleControl>>16) & 0xFF; //位置控制字節3
-  _buffer[9] = (maxSpeed>>0) & 0xFF;      //9~12 速度
-  _buffer[10] = (maxSpeed>>8) & 0xFF;
-  _buffer[11] = (maxSpeed>>16) & 0xFF;
-  _buffer[12] = (maxSpeed>>24) & 0xFF;
+  buffer[4] = checkSum;  //幀頭校驗字節
+  buffer[5] = spinDirection;             //轉動方向
+  buffer[6] = (angleControl>>0) & 0xFF;  //位置控制字節1
+  buffer[7] = (angleControl>>8) & 0xFF;  //位置控制字節2
+  buffer[8] = (angleControl>>16) & 0xFF; //位置控制字節3
+  buffer[9] = (maxSpeed>>0) & 0xFF;      //9~12 速度
+  buffer[10] = (maxSpeed>>8) & 0xFF;
+  buffer[11] = (maxSpeed>>16) & 0xFF;
+  buffer[12] = (maxSpeed>>24) & 0xFF;
   checkSum = 0;
   for (int i = 5; i <= 12; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[13] = checkSum;           //數據校驗字節
-  MOTOR_SERIAL->write(_buffer, 14); //送出封包
+  buffer[13] = checkSum;           //數據校驗字節
+  MOTOR_SERIAL->write(buffer, 14); //送出封包
   if(_need_receive){
     delayMicroseconds(delay_time);
-    _Receive_Pack();                //接收電機回覆
+    _Receive_Pack(13);             //接收電機回覆
   }
 }
 
@@ -380,29 +390,30 @@ void LKM_Motor::Write_Angle_Increment(double angle_increment){
   int32_t angleIncrement = (int32_t)(angle_increment * 100 * _reduction_ratio);   //單位換算與乘上齒輪比
 
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0xA7;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x04;  //數據長度字節 (datasheet is 0x03 ?????)
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0xA7;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x04;  //數據長度字節 (datasheet is 0x03 ?????)
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;  //幀頭校驗字節
-  _buffer[5] = (angleIncrement>>0) & 0xFF;  //5~8 增量位置
-  _buffer[6] = (angleIncrement>>8) & 0xFF;
-  _buffer[7] = (angleIncrement>>16) & 0xFF;
-  _buffer[8] = (angleIncrement>>24) & 0xFF;
+  buffer[4] = checkSum;  //幀頭校驗字節
+  buffer[5] = (angleIncrement>>0) & 0xFF;  //5~8 增量位置
+  buffer[6] = (angleIncrement>>8) & 0xFF;
+  buffer[7] = (angleIncrement>>16) & 0xFF;
+  buffer[8] = (angleIncrement>>24) & 0xFF;
   checkSum = 0;
   for (int i = 5; i <= 8; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[9] = checkSum;            //數據校驗字節
-  MOTOR_SERIAL->write(_buffer, 10); //送出封包
+  buffer[9] = checkSum;            //數據校驗字節
+  MOTOR_SERIAL->write(buffer, 10); //送出封包
   if(_need_receive){
     delayMicroseconds(delay_time);
-    _Receive_Pack();                //接收電機回覆
+    _Receive_Pack(13);             //接收電機回覆
   }
 }
 
@@ -412,110 +423,116 @@ void LKM_Motor::Write_Angle_Increment(double angle_increment, double max_speed){
   uint32_t maxSpeed = (uint32_t)(max_speed * 100 * _reduction_ratio);           //單位換算與乘上齒輪比
 
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0xA8;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x08;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0xA8;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x08;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;  //幀頭校驗字節
-  _buffer[5] = (angleIncrement>>0) & 0xFF;  //5~8 增量位置
-  _buffer[6] = (angleIncrement>>8) & 0xFF;
-  _buffer[7] = (angleIncrement>>16) & 0xFF;
-  _buffer[8] = (angleIncrement>>24) & 0xFF;
-  _buffer[9] = (maxSpeed>>0) & 0xFF;        //9~12 速度
-  _buffer[10] = (maxSpeed>>8) & 0xFF;
-  _buffer[11] = (maxSpeed>>16) & 0xFF;
-  _buffer[12] = (maxSpeed>>24) & 0xFF;
+  buffer[4] = checkSum;  //幀頭校驗字節
+  buffer[5] = (angleIncrement>>0) & 0xFF;  //5~8 增量位置
+  buffer[6] = (angleIncrement>>8) & 0xFF;
+  buffer[7] = (angleIncrement>>16) & 0xFF;
+  buffer[8] = (angleIncrement>>24) & 0xFF;
+  buffer[9] = (maxSpeed>>0) & 0xFF;        //9~12 速度
+  buffer[10] = (maxSpeed>>8) & 0xFF;
+  buffer[11] = (maxSpeed>>16) & 0xFF;
+  buffer[12] = (maxSpeed>>24) & 0xFF;
   checkSum = 0;
   for (int i = 5; i <= 12; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[13] = checkSum;           //數據校驗字節
-  MOTOR_SERIAL->write(_buffer, 14); //送出封包
+  buffer[13] = checkSum;           //數據校驗字節
+  MOTOR_SERIAL->write(buffer, 14); //送出封包
   if(_need_receive){
     delayMicroseconds(delay_time);
-    _Receive_Pack();                //接收電機回覆
+    _Receive_Pack(13);             //接收電機回覆
   }
 }
 
 //(19)設置馬達零點(0x19)
 void LKM_Motor::Set_Motor_Origin(){
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0x19;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x00;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0x19;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x00;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;            //幀頭校驗字節
-  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(buffer, 5);  //送出封包
+  /////////////////_Receive_Pack();
 }
 
 //(20)讀取多圈角度命令(0x92)
 void LKM_Motor::Read_Angle_MultiRound(){
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0x92;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x00;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0x92;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x00;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;            //幀頭校驗字節
-  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(buffer, 5);  //送出封包
   delayMicroseconds(delay_time);
-  _Receive_Pack();                  //接收電機回覆
+  _Receive_Pack(14);               //接收電機回覆
 }
 
 //(22)讀取單圈角度命令(0x94)
 void LKM_Motor::Read_Angle_SingleRound(){
   // 發送封包
-  byte checkSum;
-  _buffer[0] = 0x3E;  //頭字節
-  _buffer[1] = 0x94;  //命令字節
-  _buffer[2] = _id;   //ID
-  _buffer[3] = 0x00;  //數據長度字節
+  uint8_t buffer[20]; //要傳送之封包
+  uint8_t checkSum;
+  buffer[0] = 0x3E;  //頭字節
+  buffer[1] = 0x94;  //命令字節
+  buffer[2] = _id;   //ID
+  buffer[3] = 0x00;  //數據長度字節
   checkSum = 0;
   for (int i = 0; i <= 3; i++){
-    checkSum += _buffer[i];
+    checkSum += buffer[i];
   }
-  _buffer[4] = checkSum;            //幀頭校驗字節
-  MOTOR_SERIAL->write(_buffer, 5);  //送出封包
+  buffer[4] = checkSum;            //幀頭校驗字節
+  MOTOR_SERIAL->write(buffer, 5);  //送出封包
   delayMicroseconds(delay_time);
-  _Receive_Pack();                  //接收電機回覆
+  _Receive_Pack(10);               //接收電機回覆
 }
 
 // //(24)讀取設定參數命令(0x40)
-// void LKM_Motor::Read_Setup_Param(byte ParamID){
+// void LKM_Motor::Read_Setup_Param(uint8_t ParamID){
 //   // 發送封包
-//   byte checkSum;
-//   _buffer[0] = 0x3E;  //頭字節
-//   _buffer[1] = 0x40;  //命令字節
-//   _buffer[2] = _id;   //ID
-//   _buffer[3] = 0x02;  //數據長度字節
+//   uint8_t buffer[20]; //要傳送之封包
+//   uint8_t checkSum;
+//   buffer[0] = 0x3E;  //頭字節
+//   buffer[1] = 0x40;  //命令字節
+//   buffer[2] = _id;   //ID
+//   buffer[3] = 0x02;  //數據長度字節
 //   checkSum = 0;
 //   for (int i = 0; i <= 3; i++){
-//     checkSum += _buffer[i];
+//     checkSum += buffer[i];
 //   }
-//   _buffer[4] = checkSum;  //幀頭校驗字節
-//   _buffer[5] = ParamID;   //參數序號
-//   _buffer[6] = 0x00;      //NULL
+//   buffer[4] = checkSum;  //幀頭校驗字節
+//   buffer[5] = ParamID;   //參數序號
+//   buffer[6] = 0x00;      //NULL
 //   checkSum = 0;
 //   for (int i = 5; i <= 6; i++){
-//     checkSum += _buffer[i];
+//     checkSum += buffer[i];
 //   }
-//   _buffer[7] = checkSum;           //數據校驗字節
-//   MOTOR_SERIAL->write(_buffer, 8); //送出封包
+//   buffer[7] = checkSum;           //數據校驗字節
+//   MOTOR_SERIAL->write(buffer, 8); //送出封包
 //   delayMicroseconds(delay_time);
-//   _Receive_Pack();                 //接收電機回覆
+//   _Receive_Pack(13);              //接收電機回覆
 // }
 
 // //讀取PID參數
@@ -529,127 +546,113 @@ void LKM_Motor::Read_Angle_SingleRound(){
 // }
 
 // //(25)寫入設定參數到RAM(0x42), 斷電後失效
-// void LKM_Motor::Write_Setup_Param_Into_RAM(byte ParamID, byte data1, byte data2, byte data3, byte data4, byte data5, byte data6){
+// void LKM_Motor::Write_Setup_Param_Into_RAM(uint8_t ParamID, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4, uint8_t data5, uint8_t data6){
 //   // 發送封包
-//   byte checkSum;
-//   _buffer[0] = 0x3E;  //頭字節
-//   _buffer[1] = 0x42;  //命令字節
-//   _buffer[2] = _id;   //ID
-//   _buffer[3] = 0x07;  //數據長度字節
+//   uint8_t buffer[20]; //要傳送之封包
+//   uint8_t checkSum;
+//   buffer[0] = 0x3E;  //頭字節
+//   buffer[1] = 0x42;  //命令字節
+//   buffer[2] = _id;   //ID
+//   buffer[3] = 0x07;  //數據長度字節
 //   checkSum = 0;
 //   for (int i = 0; i <= 3; i++){
-//     checkSum += _buffer[i];
+//     checkSum += buffer[i];
 //   }
-//   _buffer[4] = checkSum;  //幀頭校驗字節
-//   _buffer[5] = ParamID;   //參數序號
-//   _buffer[6] = data1;
-//   _buffer[7] = data2;
-//   _buffer[8] = data3;
-//   _buffer[9] = data4;
-//   _buffer[10] = data5;
-//   _buffer[11] = data6;
+//   buffer[4] = checkSum;  //幀頭校驗字節
+//   buffer[5] = ParamID;   //參數序號
+//   buffer[6] = data1;
+//   buffer[7] = data2;
+//   buffer[8] = data3;
+//   buffer[9] = data4;
+//   buffer[10] = data5;
+//   buffer[11] = data6;
 //   checkSum = 0;
 //   for (int i = 5; i <= 11; i++){
-//     checkSum += _buffer[i];
+//     checkSum += buffer[i];
 //   }
-//   _buffer[12] = checkSum;           //數據校驗字節
-//   MOTOR_SERIAL->write(_buffer, 13); //送出封包
+//   buffer[12] = checkSum;           //數據校驗字節
+//   MOTOR_SERIAL->write(buffer, 13); //送出封包
 //   delayMicroseconds(delay_time);
-//   _Receive_Pack();                  //接收電機回覆
+//   _Receive_Pack(8);                //接收電機回覆
 // }
 
 // //(26)寫入設定參數到ROM(0x44), 斷電後仍然有效
-// void LKM_Motor::Write_Setup_Param(byte ParamID, byte data1, byte data2, byte data3, byte data4, byte data5, byte data6){
+// void LKM_Motor::Write_Setup_Param(uint8_t ParamID, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4, uint8_t data5, uint8_t data6){
 //   // 發送封包
-//   byte checkSum;
-//   _buffer[0] = 0x3E;  //頭字節
-//   _buffer[1] = 0x42;  //命令字節
-//   _buffer[2] = _id;   //ID
-//   _buffer[3] = 0x07;  //數據長度字節
+//   uint8_t buffer[20]; //要傳送之封包
+//   uint8_t checkSum;
+//   buffer[0] = 0x3E;  //頭字節
+//   buffer[1] = 0x42;  //命令字節
+//   buffer[2] = _id;   //ID
+//   buffer[3] = 0x07;  //數據長度字節
 //   checkSum = 0;
 //   for (int i = 0; i <= 3; i++){
-//     checkSum += _buffer[i];
+//     checkSum += buffer[i];
 //   }
-//   _buffer[4] = checkSum;  //幀頭校驗字節
-//   _buffer[5] = ParamID;   //參數序號
-//   _buffer[6] = data1;
-//   _buffer[7] = data2;
-//   _buffer[8] = data3;
-//   _buffer[9] = data4;
-//   _buffer[10] = data5;
-//   _buffer[11] = data6;
+//   buffer[4] = checkSum;  //幀頭校驗字節
+//   buffer[5] = ParamID;   //參數序號
+//   buffer[6] = data1;
+//   buffer[7] = data2;
+//   buffer[8] = data3;
+//   buffer[9] = data4;
+//   buffer[10] = data5;
+//   buffer[11] = data6;
 //   checkSum = 0;
 //   for (int i = 5; i <= 11; i++){
-//     checkSum += _buffer[i];
+//     checkSum += buffer[i];
 //   }
-//   _buffer[12] = checkSum;           //數據校驗字節
-//   MOTOR_SERIAL->write(_buffer, 13); //送出封包
+//   buffer[12] = checkSum;           //數據校驗字節
+//   MOTOR_SERIAL->write(buffer, 13); //送出封包
 //   delayMicroseconds(delay_time);
-//   _Receive_Pack();                  //接收電機回覆
+//   _Receive_Pack(8);                //接收電機回覆
 // }
 
 /*----------------------------------------------------------------------------------------------------*/
 //接受回傳指令
-void LKM_Motor::_Receive_Pack(){
-  byte temp[1]; //每次接收進來之byte
-  byte checkSum;
+void LKM_Motor::_Receive_Pack(int pack_length){
+  int data_length = pack_length - 6;
+  uint8_t data[pack_length]; //每次接收進來之byte
+  uint8_t checkSum;
 
-  _count_RX = 0;
-  while(MOTOR_SERIAL->available() > 0){
-    MOTOR_SERIAL->readBytes(temp, 1); //讀取輸入之byte
-    // Serial.println(temp[0], HEX);
-    // 確認是否為頭字節
-    if(temp[0] == 0x3E){
-      // Serial.println("head");
-      _readin[0] = temp[0];
-      _count_RX = 1;
+  if(MOTOR_SERIAL->available() > 0){
+    MOTOR_SERIAL->readBytes(data, pack_length); //讀取輸入之byte
+    if(data[0] != 0x3E){ // 確認是否為頭字節
+      sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Header Error! =====", _id);
+      Serial.println(_debug_buffer);
+      return;
     }
-    // 幀頭校驗字節
-    else if(_count_RX == 4){
-      // Serial.println("headercheck");
-      _readin[_count_RX] = temp[0];
-      
-      checkSum = 0;
-      for(int i = 0; i <= 3; i++){
-        checkSum += _readin[i];
-      }
-      if(checkSum != _readin[_count_RX]){
-        Serial.println("===== Packet Error: Header Checksum Error! =====");
-        break;
-      }
-      _count_RX++;
+
+    if(data[3] != data_length){ // 確認資料長度
+      sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Data Length Error! =====", _id);
+      Serial.println(_debug_buffer);
+      return;
     }
-    // 數據校驗字節
-    else if(_count_RX > 4 && _count_RX == _readin[3]+5){
-      // Serial.println("datacheck");
-      _readin[_count_RX] = temp[0];
-      
-      checkSum = 0;
-      for(int i = 5; i <= _count_RX-1; i++){
-        checkSum += _readin[i];
-      }
-      
-      if(checkSum != _readin[_count_RX]){
-        Serial.println("===== Packet Error: Data Checksum Error! =====");
-        break;
-      }
-      else{
-        // Serial.println("Unpack");
-        _Unpack(_readin, _count_RX); //傳送去解讀封包
-        break;
-      }
+
+    checkSum = 0;
+    for(int i = 0; i <= 3; i++){
+      checkSum += data[i];
     }
-    else{
-      // Serial.println("data");
-      _readin[_count_RX] = temp[0];
-      _count_RX++;
+    if(checkSum != data[4]){
+      sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Header Checksum Error! =====", _id);
+      Serial.println(_debug_buffer);
+      return;
     }
+
+    checkSum = 0;
+    for(int i = 5; i <= data_length+4; i++){
+      checkSum += data[i];
+    }
+    if(checkSum != data[pack_length-1]){
+      sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Data Checksum Error! =====", _id);
+      Serial.println(_debug_buffer);
+      return;
+    }
+    _Unpack(data); //傳送去解讀封包
   }
-  while(MOTOR_SERIAL->read() >= 0){} //clear serialbuffer
 }
 
 // 解讀封包內容
-void LKM_Motor::_Unpack(byte data_receive[30], int length){
+void LKM_Motor::_Unpack(uint8_t data_receive[30]){
   // (3)讀取電機狀態2命令: 回傳電機溫度、電機轉矩電流值、電機轉速以及編碼器位置 (0x9C)
   // (10)轉矩閉環控制命令: 回傳電機溫度、電機轉矩電流值、電機轉速以及編碼器位置 (0xA1)
   // (11)速度閉環控制命令: 回傳電機溫度、轉矩電流、電機速度以及編碼器位置 (0xA2)
@@ -698,8 +701,8 @@ void LKM_Motor::_Unpack(byte data_receive[30], int length){
 }
 
 // //解讀設定參數
-// void LKM_Motor::_Unpack_Read_Setup_Param(byte data_receive[30]){
-//   byte ParamID = data_receive[5];
+// void LKM_Motor::_Unpack_Read_Setup_Param(uint8_t data_receive[30]){
+//   uint8_t ParamID = data_receive[5];
 //   if(ParamID == 0x96){      //角度環PID參數
 //     anglePidKp = (uint16_t)((data_receive[7]<<8) + (data_receive[6]));
 //     anglePidKi = (uint16_t)((data_receive[9]<<8) + (data_receive[8]));
@@ -718,8 +721,8 @@ void LKM_Motor::_Unpack(byte data_receive[30], int length){
 // }
 
 // //解讀設定參數是否成功
-// void LKM_Motor::_Unpack_Write_Setup_Param(byte data_receive[30]){
-//   byte ParamID = data_receive[5];
+// void LKM_Motor::_Unpack_Write_Setup_Param(uint8_t data_receive[30]){
+//   uint8_t ParamID = data_receive[5];
 //   int write_successful = data_receive[6]; // 0 is successful, 1 is failed
 //   if(ParamID == 0x96){      //角度環PID參數
 //     if(write_successful == 0) Serial.println("Angle loop PID parameters set successfully.");
