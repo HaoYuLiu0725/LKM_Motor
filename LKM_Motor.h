@@ -75,8 +75,8 @@ public:
   uint16_t currentPidKd = 0;  //電流環Kd
   
 private:
-  void _Receive_Pack(int pack_length);                //接受回傳指令
-  void _Unpack(uint8_t data_receive[30]); //解讀封包內容
+  void _Receive_Pack(const int pack_length); //接受回傳指令
+  void _Unpack(uint8_t data_receive[30]);    //解讀封包內容
   bool _Find_Turn_Direction(double target_angle);  // direction: True -> 順時針 ; False -> 逆時針
   double _Normalize_Angle_Deg(double angle);       // 將任意角度轉化成 -180 ~ 180
   // void _Unpack_Read_Setup_Param(uint8_t data_receive[30]); //解讀回傳的設定參數
@@ -88,7 +88,6 @@ private:
   double _Kt = 0.0;                   //馬達的轉矩常數Kt
   int _baudrate = LKM_Motor_BAUDRATE; //馬達設定的baudrate
   bool _need_receive = false;         //設定非讀取資訊的指令是否需要解封包
-  char _debug_buffer[100];            //列印出debug message的buffer
 };
 
 #endif

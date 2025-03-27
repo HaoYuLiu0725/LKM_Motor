@@ -609,53 +609,55 @@ void LKM_Motor::Read_Angle_SingleRound(){
 
 /*----------------------------------------------------------------------------------------------------*/
 //接受回傳指令
-void LKM_Motor::_Receive_Pack(int pack_length){
+void LKM_Motor::_Receive_Pack(const int pack_length) {
   int data_length = pack_length - 6;
-  uint8_t data[pack_length]; //每次接收進來之byte
-  uint8_t checkSum;
+  uint8_t temp; //每次接收進來之byte
+  uint8_t data[pack_length] = {0};
 
-  if(MOTOR_SERIAL->available() > 0){
-    MOTOR_SERIAL->readBytes(data, pack_length); //讀取輸入之byte
-    if(data[0] != 0x3E){ // 確認是否為頭字節
-      if(debug_mode){
-        sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Header Error! =====", _id);
-        Serial.println(_debug_buffer);
-      }
-      return;
-    }
+  int count_RX = 0;
+  bool get_header = false;
+  while (MOTOR_SERIAL->available() > 0) {
+    temp = MOTOR_SERIAL->read(); // Read incoming byte
 
-    if(data[3] != data_length){ // 確認資料長度
-      if(debug_mode){
-        sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Data Length Error! =====", _id);
-        Serial.println(_debug_buffer);
+    if (!get_header) { // If header not yet received
+      if (temp == 0x3E) { // Check if it's the header byte
+        data[0] = temp;
+        count_RX = 1;
+        get_header = true;
       }
-      return;
-    }
-
-    checkSum = 0;
-    for(int i = 0; i <= 3; i++){
-      checkSum += data[i];
-    }
-    if(checkSum != data[4]){
-      if(debug_mode){
-        sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Header Checksum Error! =====", _id);
-        Serial.println(_debug_buffer);
+      // else: discard this byte
+    } 
+    else { // Header already received
+      data[count_RX] = temp;
+      if (count_RX == 3) { // Data length check
+        if (data[count_RX] != data_length) {
+          if (debug_mode) Serial.printf("===== LKM_Motor ID:%d Packet Error: Data Length Error! =====\n", _id);
+          break;
+        }
+      } 
+      else if (count_RX == 4) { // Header checksum validation
+        uint8_t headerCheckSum = data[0] + data[1] + data[2] + data[3];
+        if (headerCheckSum != data[count_RX]) {
+          if (debug_mode) Serial.printf("===== LKM_Motor ID:%d Packet Error: Header Checksum Error! =====\n", _id);
+          break;
+        }
+      } 
+      else if (count_RX == pack_length - 1) { // Data checksum validation
+        uint8_t dataCheckSum = 0;
+        for (int i = 5; i < count_RX; i++) {
+          dataCheckSum += data[i];
+        }
+        if (dataCheckSum != data[count_RX]) {
+          if (debug_mode) Serial.printf("===== LKM_Motor ID:%d Packet Error: Data Checksum Error! =====\n", _id);
+          break;
+        } 
+        else {
+          _Unpack(data); // Process received packet
+          break;
+        }
       }
-      return;
+      count_RX++;
     }
-
-    checkSum = 0;
-    for(int i = 5; i <= data_length+4; i++){
-      checkSum += data[i];
-    }
-    if(checkSum != data[pack_length-1]){
-      if(debug_mode){
-        sprintf(_debug_buffer, "===== LKM_Motor ID:%d Packet Error: Data Checksum Error! =====", _id);
-        Serial.println(_debug_buffer);
-      }
-      return;
-    }
-    _Unpack(data); //傳送去解讀封包
   }
 }
 
